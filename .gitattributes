@@ -1,0 +1,16 @@
+# 文本文件由 Git 自动识别并归一化换行，避免跨平台 diff 噪声
+* text=auto
+
+# 明确按文本处理，便于 GitHub 上直接查看差异
+*.html text
+*.md   text
+*.json text
+*.css  text
+*.js   text
+
+# 二进制文件不参与文本 diff
+*.docx binary
+*.xlsx binary
+*.zip  binary
+*.png  binary
+*.jpg  binary

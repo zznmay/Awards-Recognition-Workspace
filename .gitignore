@@ -1,0 +1,36 @@
+# ── 操作系统 ──────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+Thumbs.db
+Desktop.ini
+
+# ── 编辑器 / IDE / 本地工具元数据 ──────────────────
+.vscode/
+.idea/
+.zcode/
+.workbuddy/
+*.swp
+*.swo
+*~
+
+# ── 临时与备份产物 ────────────────────────────────
+*.bak
+*.bak.*
+*.orig
+*.tmp
+*.log
+*.rej
+node_modules/
+dist/
+build/
+
+# ── 本地数据与导出文件（含学生信息，禁止入库）──────
+# 工作台业务数据保存在浏览器 localStorage，不随仓库分发；
+# 以下仅拦截可能误入仓库的本地导出/备份文件。
+*.local.json
+备份_*.json
+*_备份_*.json
+data/
+exports/
