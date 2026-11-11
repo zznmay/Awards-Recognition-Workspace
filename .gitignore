@@ -32,5 +32,7 @@ build/
 *.local.json
 备份_*.json
 *_备份_*.json
+评奖评优归档_*.json
+归档_*.json
 data/
 exports/

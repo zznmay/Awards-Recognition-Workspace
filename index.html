@@ -68,6 +68,38 @@ input,select{font-family:inherit;font-size:16px;color:var(--txt);transition:.2s 
 #role-sel{display:none}
 .sync{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ok);background:var(--ok-l);padding:5px 12px;border-radius:20px;white-space:nowrap}
 .sync .dot{width:7px;height:7px;border-radius:50%;background:var(--success)}
+/* ---------- 学年 / 批次上下文（新增） ---------- */
+.ctx-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ctx-sel{height:30px;border:1px solid var(--border);border-radius:16px;background:var(--bg-card);color:var(--txt);font-size:12px;padding:0 10px;max-width:190px;cursor:pointer}
+.ctx-sel:disabled{opacity:.55;cursor:not-allowed}
+.ctx-tag{font-size:11px;color:var(--sub);border:1px dashed var(--line2);border-radius:14px;padding:3px 9px;white-space:nowrap}
+.ctx-tag.ok{color:var(--ok);border-color:var(--ok);background:var(--ok-l)}
+.ctx-tag.warn{color:var(--warn);border-color:var(--warn);background:var(--warn-l)}
+/* ---------- 学年与归档面板（新增） ---------- */
+.arc-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;background:var(--bg-card)}
+.arc-row .t{font-weight:600;font-size:13px}
+.arc-row .m{font-size:12px;color:var(--sub)}
+.arc-row .acts{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.arc-row.sub{margin-left:22px;padding:8px 10px;border-style:dashed;background:#F8FAFC}
+.arc-row.sub .t{font-weight:500;font-size:12.5px}
+.arc-badge{font-size:11px;padding:3px 9px;border-radius:14px;background:var(--pri-l);color:var(--pri);white-space:nowrap}
+.arc-badge.ok{background:var(--ok-l);color:var(--ok)}
+.arc-badge.warn{background:var(--warn-l);color:var(--warn)}
+.arc-badge.bad{background:var(--bad-l);color:var(--bad)}
+.arc-badge.gray{background:#EEF2F7;color:var(--sub)}
+.arc-chk{font-size:12px;padding:8px 10px;border-radius:8px;margin-bottom:6px;line-height:1.6}
+.arc-chk.ok{background:var(--ok-l);color:var(--ok)}
+.arc-chk.no{background:var(--bad-l);color:var(--bad)}
+.arc-chk.warn{background:var(--warn-l);color:var(--warn)}
+.arc-tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+.arc-tbl th,.arc-tbl td{border-bottom:1px dashed var(--border);padding:7px 8px;text-align:left;vertical-align:top}
+.arc-tbl th{color:var(--sub);font-weight:500;white-space:nowrap}
+.arc-tbl td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.arc-tbl tr:last-child td{border-bottom:none}
+.arc-hint{font-size:11px;color:var(--hint);line-height:1.7;margin-top:8px}
+.arc-sec{margin-top:14px;padding-top:12px;border-top:1px dashed var(--border)}
+.arc-sec h4{font-size:13px;font-weight:600;margin-bottom:6px;color:var(--txt)}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;color:var(--sub);word-break:break-all}
 #content{flex:1;min-height:0;height:calc(100vh - 56px);overflow-y:auto;overflow-x:hidden}
 main{max-width:1100px;margin:0 auto;padding:24px 28px}
 .view{display:none}.view.on{display:block}
@@ -310,6 +342,7 @@ td.num{font-variant-numeric:tabular-nums}
    不再被 flex 居中顶出视口；100dvh 兼容移动端浏览器地址栏收放 */
 .modal{background:var(--bg-card);border-radius:12px;padding:24px;max-width:400px;width:100%;animation:pop .18s ease;max-height:calc(100vh - 40px);max-height:calc(100dvh - 40px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .modal.wide{max-width:480px}
+.modal.xwide{max-width:880px}
 @keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
 .modal h3{font-size:15px;font-weight:600;margin-bottom:8px;display:flex;gap:8px;align-items:center}
 .modal h3 .icon{color:var(--warning)}
@@ -565,6 +598,11 @@ body.pub-query-mode{background:linear-gradient(135deg,#F0F4F8 0%,#E2E8F0 100%)}
   <div id="main-area" data-page-node-id="NdlTxlRHJHViOHcsDnkJmJ">
     <header id="topbar" data-page-node-id="YUOPpU7HCF2nP5RWA9p9wM">
       <div id="page-title" data-page-node-id="TnRm1yHksU3ADMLvpbmJ4y">仪表盘概览</div>
+      <div class="ctx-bar" id="ctx-bar">
+        <span class="ctx-tag" id="ctx-year-tag">学年 —</span>
+        <select id="year-sel" class="ctx-sel" aria-label="选择学年"></select>
+        <select id="batch-sel" class="ctx-sel" aria-label="选择批次"></select>
+      </div>
       <div class="topbar-right" data-page-node-id="TlL26niPXUPNmbY1P4deyk">
         <span class="sync" id="sync-chip" data-page-node-id="vAfJn0IYdBejmhO44m7hJI"><span class="dot" data-page-node-id="WYrEGwL8nPtvbbYIYzwSdv"></span><span id="sync-txt" data-page-node-id="n9xsjnmosV3CG8BMdXktaq">本地已保存</span></span>
         <span class="role-badge" id="topbar-role" data-page-node-id="lxKC7mAou2F6Vz2FkT8oIj">学院管理员</span>
@@ -675,6 +713,19 @@ body.pub-query-mode{background:linear-gradient(135deg,#F0F4F8 0%,#E2E8F0 100%)}
               <button class="btn btn-d btn-s" id="btn-clear-demo" data-page-node-id="okoxOKFh3r1Ah8AkIOSdSf"><svg class="icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="ToKANqGTI6qkB7fzElI0Rz"><path d="M3 6h18" data-page-node-id="9Yi5PXuhwfWMK4KHIPSsVU"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" data-page-node-id="BTQRGGZaSwkqisgdPeLslZ"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" data-page-node-id="SZnWjSJSt19xeGcoMvtgkH"/></svg>清空示例数据</button>
             </div>
             <input type="file" id="import-file" accept=".json" hidden data-page-node-id="wpvSfwnVQeBxVz9b5q42Ax">
+          </div>
+          <div class="panel" id="archive-panel">
+            <h3><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>学年与归档</h3>
+            <p class="desc">按学年封存评定数据。归档后该学年整体封存为<b>不可变快照</b>并移出工作数据，独立保存于本机归档库；进入新学年后仍可回看历史学年，新学年操作不会覆盖或污染历史数据。</p>
+            <div class="actions" style="margin:0">
+              <button class="btn btn-p btn-s" id="btn-archive-year">结束本学年并归档</button>
+              <button class="btn btn-o btn-s" id="btn-new-year">新建学年</button>
+              <button class="btn btn-o btn-s" id="btn-new-batch">新建批次</button>
+              <button class="btn btn-o btn-s" id="btn-archive-import">导入归档文件</button>
+              <input type="file" id="archive-file" accept=".json" hidden>
+            </div>
+            <div id="archive-list" style="margin-top:12px"></div>
+            <div class="arc-hint">归档库使用独立本地存储键，<b>不参与</b>普通 JSON 备份与云同步的整包覆盖，因此导入备份或跨设备同步都不会影响历史学年；历史学年请通过「导出归档文件」单独迁移。导出文件含学生名单与成绩，属敏感数据，<b>请勿提交仓库</b>。</div>
           </div>
           <div class="panel" id="pub-api-panel">
             <h3><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>公示分享短链接口</h3>
@@ -852,6 +903,991 @@ function svg(name,cls){return '<svg class="icon '+(cls||"")+'" viewBox="0 0 24 2
 const KEY="wb_pjpy_state_v1";
 let state=null,filterCat="全部",searchKw="",booting=true;
 
+/* ==================== 学年与归档（学年化 + 历史封存） ====================
+   设计要点（对应《学年数据归档实现方案》）：
+   1) 学年是一级实体（state.years[]），批次通过 yearId 归属到学年；一学年可含多批次（分学期/补评/专项）。
+   2) 归档库使用独立存储键 AKEY，不参与 save() 的整包覆盖，也不进入云同步载荷。
+   3) 归档执行 = 快照整体移出工作数据 → 写入归档库 → 回放一致性校验 → 原子提交。
+      历史学年数据从此不在 state 内，现有写路径在结构上无法触碰它。
+   4) 封存后快照不可变；更正只走「勘误」追加通道，且不改变归档指纹。 */
+const AKEY="wb_pjpy_archive_v1";   // 归档库独立键（与工作数据完全隔离）
+const AKEY_VER=1;                 // 归档库结构版本
+const YEAR_VER=1;                 // 学年实体结构版本
+const ARCHIVE_VER=1;              // 归档快照结构版本
+let _sysWrite=false;              // 系统写入旁路（归档提交等内部写操作）
+
+/* ---------- 归档库读写 ---------- */
+function loadArchiveStore(){
+  try{
+    const raw=localStorage.getItem(AKEY);
+    if(!raw)return{version:AKEY_VER,items:{}};
+    const o=JSON.parse(raw);
+    if(!o||typeof o!=="object")return{version:AKEY_VER,items:{}};
+    if(!o.items||typeof o.items!=="object")o.items={};
+    return o;
+  }catch(e){return{version:AKEY_VER,items:{}}}
+}
+function saveArchiveStore(store){
+  try{localStorage.setItem(AKEY,JSON.stringify(store));invalidateArchIds();return true}
+  catch(e){try{toast("归档库写入失败：本地存储空间不足","alert")}catch(e2){}return false}
+}
+function archiveList(){
+  const s=loadArchiveStore();
+  return Object.keys(s.items).map(function(k){return s.items[k]}).filter(Boolean)
+    .sort(function(a,b){return String(b.archivedAt||"").localeCompare(String(a.archivedAt||""))});
+}
+function getArchive(yearId){return loadArchiveStore().items[yearId]||null}
+
+/* ---------- 学年实体 ---------- */
+function newYearObj(name){
+  return{id:"y_"+uid(),name:name||("新建学年 "+todayStr()),startDate:null,endDate:null,status:"评定中",
+    createdAt:new Date().toISOString(),mtime:Date.now(),archivedAt:null,archivedBy:null,archiveId:null,
+    fingerprint:null,manifest:null,correctionCount:0,schemaVersion:YEAR_VER};
+}
+function yearList(){return(state&&Array.isArray(state.years))?state.years:[]}
+/* 已封存学年 id 登记表（带缓存：避免每次保存都重新解析整个归档库） */
+let _archIds=null;
+function archivedYearIds(){
+  if(!_archIds){_archIds={};archiveList().forEach(function(r){_archIds[r.yearId]=1})}
+  return _archIds;
+}
+function invalidateArchIds(){_archIds=null}
+/* 学年是否已封存：状态标记或归档库中已有同名记录（导入旧备份也不会复活已封存学年） */
+function isYearArchived(y){return !!(y&&(y.status==="已归档"||archivedYearIds()[y.id]))}
+function curYear(){
+  const ys=yearList();
+  const act=ys.find(function(y){return y.id===state.activeYearId});
+  if(act&&!isYearArchived(act))return act;
+  return ys.find(function(y){return !isYearArchived(y)})||ys[0]||null;
+}
+function yearById(id){return yearList().find(function(y){return y.id===id})||null}
+function yearBatches(yearId){return(state.batches||[]).filter(function(b){return b.yearId===yearId})}
+/* 学年归属补齐：存量批次归入当前学年；activeBatch 必须落在当前学年内 */
+function ensureYears(){
+  if(!Array.isArray(state.years))state.years=[];
+  const bs=state.batches||[];
+  /* 当前学年必须可写：已封存（含归档库中已存在的同名 id）不得作为工作学年 */
+  let active=state.years.find(function(y){return y.id===state.activeYearId});
+  if(!active||isYearArchived(active)){
+    active=state.years.find(function(y){return !isYearArchived(y)})||null;
+    if(!active){active=newYearObj();state.years.push(active)}
+    state.activeYearId=active.id;
+  }
+  bs.forEach(function(b){if(!b.yearId)b.yearId=active.id});
+  state.years.forEach(function(y){y.batchIds=bs.filter(function(b){return b.yearId===y.id}).map(function(b){return b.id})});
+  if(!bs.some(function(b){return b.id===state.activeBatch&&b.yearId===active.id})){
+    const fb=bs.find(function(b){return b.yearId===active.id});
+    if(fb)state.activeBatch=fb.id;
+  }
+}
+/* 读取批次"实际生效"的评定规则（各读取函数自带系统默认值回退）。
+   重要：b.rankWeights / b.gradeRules 等字段只在用户手动保存规则时才写入，
+   字段缺失 ≠ 没有规则，而是"正在使用系统默认配置"。归档判定与快照固化都必须用生效值，
+   否则会把从未改过规则的正常批次误判为"缺配置"。 */
+function effectiveRules(b){
+  const r={
+    rankWeights:rankWeights(b),gradeRules:gradeRules(b),
+    sanhaoRules:sanhaoRules(b),ganbuRules:ganbuRules(b),xingzhiRules:xingzhiRules(b),
+    followPolicy:(b&&b.followPolicy)?clone(b.followPolicy):defaultFollowPolicy()
+  };
+  r.__defaults=["rankWeights","gradeRules","sanhaoRules","ganbuRules","xingzhiRules"]
+    .filter(function(k){return !(b&&b[k])});
+  return r;
+}
+/* 配置模板继承：只继承配置与结构模板，业务数据一律为空 */
+function inheritConfig(src){
+  const o={};
+  if(!src)return o;
+  ["rankWeights","gradeRules","sanhaoRules","ganbuRules","xingzhiRules","followPolicy","flags"].forEach(function(k){
+    if(src[k]!==undefined)o[k]=clone(src[k]);
+  });
+  return o;
+}
+function suggestNextYearName(cur){
+  const m=/(\d{4})\s*-\s*(\d{4})/.exec(cur||"");
+  if(m){const a=parseInt(m[1],10),b=parseInt(m[2],10);if(!isNaN(a)&&!isNaN(b))return(a+1)+"-"+(b+1)+"学年"}
+  return "新建学年 "+todayStr();
+}
+
+/* ---------- 归档清单与指纹 ---------- */
+function buildManifest(bs){
+  const m={batches:[],totals:{batches:0,students:0,detail:0,quota:0,todos:0,versions:0,trialVersions:0,publications:0,objections:0,audit:0}};
+  (bs||[]).forEach(function(b){
+    let vs=0,trial=0;const layers={};
+    LAYERS.forEach(function(L){
+      const st=b.stage&&b.stage[L];const list=(st&&st.versions)||[];
+      const t=list.filter(function(v){return !v.confirmedAt}).length;
+      vs+=list.length;trial+=t;
+      layers[L]={versions:list.length,trial:t,activeVid:(st&&st.activeVid)||null};
+    });
+    const row={id:b.id,name:b.name,students:(b.students||[]).length,detail:(b.detail||[]).length,
+      quota:(b.quota||[]).length,todos:(b.todos||[]).length,publications:(b.publications||[]).length,
+      objections:(b.objections||[]).length,versions:vs,trialVersions:trial,audit:(b.audit||[]).length,layers:layers};
+    m.batches.push(row);
+    const t=m.totals;
+    t.batches++;t.students+=row.students;t.detail+=row.detail;t.quota+=row.quota;t.todos+=row.todos;
+    t.versions+=row.versions;t.trialVersions+=row.trialVersions;t.publications+=row.publications;
+    t.objections+=row.objections;t.audit+=row.audit;
+  });
+  return m;
+}
+/* 回放一致性校验：脱离当前工作数据，仅凭归档副本复核计数与指纹 */
+function verifyArchive(rec){
+  try{
+    const sn=rec&&rec.snapshot;
+    if(!sn||!Array.isArray(sn.batches))return{ok:false,msg:"快照结构缺失"};
+    if(hashOf(sn)!==rec.fingerprint)return{ok:false,msg:"快照整体指纹与归档记录不一致"};
+    let students=0,versions=0;
+    sn.batches.forEach(function(b){
+      students+=(b.students||[]).length;
+      LAYERS.forEach(function(L){
+        const st=b.stage&&b.stage[L];
+        ((st&&st.versions)||[]).forEach(function(v){
+          versions++;
+          if(v.dataHash&&hashOf(v.data)!==v.dataHash)throw new Error("版本 "+(v.vid||"?")+" 的数据指纹与快照不一致");
+        });
+      });
+    });
+    const tt=(rec.manifest&&rec.manifest.totals)||{};
+    if(students!==tt.students)return{ok:false,msg:"清单人数("+tt.students+")与快照实际("+students+")不一致"};
+    if(versions!==tt.versions)return{ok:false,msg:"清单版本数("+tt.versions+")与快照实际("+versions+")不一致"};
+    return{ok:true};
+  }catch(e){return{ok:false,msg:(e&&e.message)||"校验异常"}}
+}
+
+/* ---------- 归档前置校验（任一不通过即整体阻断） ---------- */
+function archiveChecks(year){
+  const out=[];
+  const bs=yearBatches(year.id);
+  out.push({lb:"学年状态为「评定中」",ok:year.status==="评定中",detail:"当前状态："+year.status});
+  out.push({lb:"学年下至少 1 个批次且归属完整",ok:bs.length>0&&bs.every(function(b){return b.yearId===year.id}),
+    detail:bs.length?("共 "+bs.length+" 个批次"):"该学年下没有任何批次"});
+  const un=[];
+  bs.forEach(function(b){LAYERS.forEach(function(L){
+    const st=b.stage&&b.stage[L];const list=(st&&st.versions)||[];
+    if(!list.length)return;                                   // 该层本学年未启用，不阻断
+    const v=list.find(function(x){return x.vid===st.activeVid});
+    if(!v||!v.confirmedAt)un.push(b.name+" · "+pubLayerLb(L));
+  })});
+  out.push({lb:"已计算层均已选定并确认版本",ok:un.length===0,
+    detail:un.length?("未确认："+un.join("、")):"全部已确认（未启用的层不阻断）"});
+  const live=[],revoked=[];
+  bs.forEach(function(b){(b.publications||[]).forEach(function(p){
+    if(p.status==="公示中")live.push(b.name+" · "+p.title);
+    else if(p.status==="已撤销")revoked.push(b.name+" · "+p.title);
+  })});
+  out.push({lb:"所有公示单均已结束公示",ok:live.length===0,
+    detail:live.length?("仍在公示中："+live.join("、")):(revoked.length?("含 "+revoked.length+" 个已撤销公示（按撤销状态封存）"):"无公示单或均已结束")});
+  const open=[];
+  bs.forEach(function(b){(b.objections||[]).forEach(function(o){
+    if(o.status!=="不成立")open.push(b.name+" · "+(o.name||o.sid)+"（"+o.status+"）");
+  })});
+  out.push({lb:"不存在未终结异议",ok:open.length===0,
+    detail:open.length?("未终结 "+open.length+" 条："+open.slice(0,6).join("、")+(open.length>6?" …":"")):"异议均已终结"});
+  /* 规则口径：按"实际生效值"判定。字段缺失表示使用系统默认配置（读取函数自带默认值），
+     不算缺配置；只拦截真正异常的规则（权重合计≠100、等级档位缺失）。 */
+  const badRules=[],defaultCfg=[];
+  bs.forEach(function(b){
+    const r=effectiveRules(b);
+    if(r.__defaults.length)defaultCfg.push(b.name);
+    const w=r.rankWeights,sum=w.z+w.d+w.w+w.n;
+    if(!isFinite(sum)||Math.abs(sum-100)>0.01)badRules.push(b.name+"（权重合计 "+sum+"≠100）");
+    if(!r.gradeRules.tiers||r.gradeRules.tiers.length!==3)badRules.push(b.name+"（等级档位异常）");
+  });
+  out.push({lb:"规则配置与名额已记录（可复盘口径）",ok:badRules.length===0,
+    detail:badRules.length?("规则异常："+badRules.join("、"))
+      :("共 "+bs.length+" 个批次；"+(defaultCfg.length?("其中 "+defaultCfg.length+" 个使用系统默认配置，归档时将按生效值固化进快照"):"规则配置均为显式保存值"))});
+  const ex=getArchive(year.id);
+  out.push({lb:"归档时刻勘误数为 0",ok:!(ex&&ex.correctionCount>0),
+    detail:ex&&ex.correctionCount?("已有 "+ex.correctionCount+" 条勘误"):"无"});
+  out.push({lb:"二次确认与操作留痕",ok:true,detail:"本次归档须填写原因并二次确认，操作者与时间写入归档记录"});
+  return out;
+}
+
+/* ---------- 归档执行（幂等 + 原子提交） ---------- */
+function archiveYear(yearId,reason){
+  const year=yearById(yearId);
+  if(!year)return{ok:false,msg:"学年不存在"};
+  const bs=yearBatches(yearId);
+  const snapshot={schemaVersion:ARCHIVE_VER,batches:clone(bs),
+    fieldDefs:{base:BASE_FIELDS,detail:DETAIL_COLS,layers:LAYERS}};
+  /* 规则口径固化：把每个批次"实际生效"的规则显式写入快照副本（不改写工作数据）。
+     使用系统默认配置的批次也按生效值落盘，避免日后默认规则调整后历史结果无法复盘。 */
+  snapshot.ruleDefaults=[];
+  snapshot.batches.forEach(function(b){
+    const r=effectiveRules(b);
+    const fromDefault=r.__defaults;delete r.__defaults;
+    Object.keys(r).forEach(function(k){b[k]=r[k]});
+    if(fromDefault.length)snapshot.ruleDefaults.push({id:b.id,name:b.name,fields:fromDefault});
+  });
+  const fingerprint=hashOf(snapshot);
+  const existing=getArchive(yearId);
+  /* 幂等 / 拒绝重归档：已封存学年不因再次触发而改写 */
+  if(existing){
+    if(year.status==="已归档")return{ok:true,idempotent:true,archive:existing,msg:"该学年已归档，未重复归档"};
+    if(existing.fingerprint===fingerprint)return{ok:true,idempotent:true,archive:existing,msg:"该学年已归档且内容一致，未重复归档"};
+    return{ok:false,msg:"该学年已归档，且归档后源数据发生变化。归档快照不可改写，更正请走「勘误」通道。"};
+  }
+  /* 前置校验：任一不通过即整体阻断，不产生任何半成品 */
+  const checks=archiveChecks(year);
+  const bad=checks.filter(function(c){return !c.ok});
+  if(bad.length)return{ok:false,msg:"归档前置条件未满足："+bad.map(function(c){return c.lb}).join("；"),checks:checks};
+  const manifest=buildManifest(snapshot.batches);
+  manifest.defaultRuleBatches=clone(snapshot.ruleDefaults);
+  const rec={id:"a_"+uid(),yearId:year.id,yearName:year.name,status:"已归档",
+    archivedAt:new Date().toISOString(),archivedBy:(ROLES[state.role]||"学院管理员"),reason:reason||"",
+    fingerprint:fingerprint,manifest:manifest,schemaVersion:ARCHIVE_VER,
+    snapshot:snapshot,corrections:[],correctionCount:0,mtime:Date.now()};
+  const store=loadArchiveStore();
+  store.items[yearId]=rec;
+  if(!saveArchiveStore(store))return{ok:false,msg:"归档库写入失败（本地存储空间不足），已取消归档，当前学年数据未改动。"};
+  const chk=verifyArchive(rec);
+  if(!chk.ok){
+    const st2=loadArchiveStore();delete st2.items[yearId];saveArchiveStore(st2);
+    return{ok:false,msg:"归档完整性校验未通过，已回滚："+chk.msg};
+  }
+  const before=clone(state.batches);
+  const beforeYears=clone(state.years);
+  const beforeYearId=state.activeYearId, beforeBatch=state.activeBatch;
+  let newYear=null;
+  try{
+    _sysWrite=true;
+    state.batches=(state.batches||[]).filter(function(b){return b.yearId!==yearId});
+    year.status="已归档";year.archivedAt=rec.archivedAt;year.archivedBy=rec.archivedBy;
+    year.archiveId=rec.id;year.fingerprint=fingerprint;year.manifest=manifest;year.correctionCount=0;
+    /* 学年门禁：归档后自动建立新学年（仅继承配置模板，业务数据全空）并切换为当前学年 */
+    newYear=newYearObj(suggestNextYearName(year.name));
+    state.years.push(newYear);
+    const nid=uid();
+    const nb={id:nid,name:newYear.name+" · 第一批次",isDemo:false,createdAt:new Date().toISOString(),mtime:Date.now(),
+      students:[],detail:[],todos:[],quota:[],stage:{},yearId:newYear.id};
+    const cfg=inheritConfig(bs[0]);
+    Object.keys(cfg).forEach(function(k){nb[k]=cfg[k]});
+    state.batches.push(nb);
+    state.activeYearId=newYear.id;state.activeBatch=nid;
+    ensureYears();
+    save();
+  }catch(e){
+    /* 全成功或全不动：同时回滚工作数据、学年表与归档库，不留半成品 */
+    state.batches=before;
+    state.years=beforeYears;
+    state.activeYearId=beforeYearId;
+    state.activeBatch=beforeBatch;
+    const st3=loadArchiveStore();delete st3.items[yearId];saveArchiveStore(st3);
+    try{_sysWrite=false;save()}catch(e2){}
+    return{ok:false,msg:"归档提交后本地写入失败，已回滚工作数据与归档库："+((e&&e.message)||e)};
+  }finally{_sysWrite=false}
+  return{ok:true,archive:rec,newYear:newYear};
+}
+
+/* ---------- 勘误（只追加；不改写快照；不改归档指纹） ---------- */
+function addCorrection(yearId,corr){
+  const store=loadArchiveStore();const rec=store.items[yearId];
+  if(!rec)return{ok:false,msg:"未找到该学年的归档"};
+  const c={id:"c_"+uid(),at:new Date().toISOString(),by:(ROLES[state.role]||"学院管理员"),
+    target:(corr&&corr.target)||"",before:(corr&&corr.before!=null)?String(corr.before):"",
+    after:(corr&&corr.after!=null)?String(corr.after):"",reason:(corr&&corr.reason)||""};
+  c.fingerprint=hashOf({target:c.target,before:c.before,after:c.after,reason:c.reason});
+  rec.corrections=rec.corrections||[];
+  rec.corrections.push(c);
+  rec.correctionCount=rec.corrections.length;
+  rec.mtime=Date.now();
+  if(!saveArchiveStore(store))return{ok:false,msg:"勘误写入失败，归档快照未改动"};
+  const y=yearById(yearId);if(y)y.correctionCount=rec.correctionCount;
+  return{ok:true,correction:c};
+}
+
+/* ---------- 归档导出 / 导入 ---------- */
+function archiveFileName(rec){return "评奖评优归档_"+String(rec.yearName||rec.yearId).replace(/[\\/:*?"<>|]/g,"_")+"_"+todayStr()+".json"}
+function exportArchive(yearId){
+  const rec=getArchive(yearId);
+  if(!rec){toast("未找到该学年的归档","alert");return}
+  const payload={kind:"pjpy-archive",schemaVersion:rec.schemaVersion,yearId:rec.yearId,yearName:rec.yearName,
+    archivedAt:rec.archivedAt,archivedBy:rec.archivedBy,reason:rec.reason,fingerprint:rec.fingerprint,
+    manifest:rec.manifest,snapshot:rec.snapshot,corrections:rec.corrections||[],correctionCount:rec.correctionCount||0};
+  download(archiveFileName(rec),JSON.stringify(payload,null,2),"application/json");
+  toast("归档文件已导出（含学生名单与成绩，属敏感数据，请勿提交仓库）","check");
+}
+function importArchivePayload(o,force){
+  if(!o||o.kind!=="pjpy-archive"||!o.snapshot||!o.yearId){toast("不是有效的归档文件","alert");return{ok:false,msg:"不是有效的归档文件"}}
+  const store=loadArchiveStore();
+  const ex=store.items[o.yearId];
+  if(ex&&ex.fingerprint===o.fingerprint){toast("该归档已存在且内容一致，未重复导入","check");return{ok:true,idempotent:true}}
+  if(ex&&ex.fingerprint!==o.fingerprint&&!force){
+    return{ok:false,needConfirm:true,msg:"该学年已存在内容不同的归档。继续导入会覆盖历史快照（原快照不可改写），请确认是否继续。"};
+  }
+  const rec={id:(ex&&ex.id)||("a_"+uid()),yearId:o.yearId,yearName:o.yearName||o.yearId,status:"已归档",
+    archivedAt:o.archivedAt||new Date().toISOString(),archivedBy:o.archivedBy||"导入",reason:o.reason||"",
+    fingerprint:o.fingerprint||hashOf(o.snapshot),manifest:o.manifest||buildManifest(o.snapshot.batches||[]),
+    schemaVersion:o.schemaVersion||ARCHIVE_VER,snapshot:o.snapshot,corrections:o.corrections||[],
+    correctionCount:(o.corrections||[]).length,mtime:Date.now()};
+  const chk=verifyArchive(rec);
+  if(!chk.ok){toast("归档完整性校验未通过："+chk.msg,"alert");return{ok:false,msg:chk.msg}}
+  store.items[o.yearId]=rec;
+  if(!saveArchiveStore(store)){toast("归档库写入失败","alert");return{ok:false,msg:"归档库写入失败"}}
+  return{ok:true,archive:rec};
+}
+function handleArchiveFile(file){
+  if(!file)return;
+  file.text().then(function(t){
+    let o=null;
+    try{o=JSON.parse(t)}catch(e){}
+    if(!o||o.kind!=="pjpy-archive"){toast("不是有效的归档文件","alert");return}
+    const r=importArchivePayload(o,false);
+    if(r.needConfirm){
+      confirmModal("归档已存在且内容不同",esc(r.msg),function(){
+        const r2=importArchivePayload(o,true);
+        if(r2.ok){toast("归档已导入","check");renderAll()}else{toast(r2.msg||"导入失败","alert")}
+      },"覆盖导入");
+      return;
+    }
+    if(r.ok){toast(r.idempotent?"该归档已存在且内容一致，未重复导入":"归档已导入，可在此回看历史学年","check");renderAll()}
+    else toast(r.msg||"导入失败","alert");
+  }).catch(function(){toast("归档文件读取失败","alert")});
+}
+
+/* ---------- 数据删除（学年归档 / 指定批次） ----------
+   本项目为纯前端单文件 SPA，没有服务端；此处的"接口"即数据访问层 API：
+   归档侧写独立归档库 AKEY，工作数据侧写 state（KEY）。两端都以 {ok,msg,...} 统一返回，
+   失败不改动任何数据（写失败即回滚），成功后同步 activeBatch / year.batchIds 等一致性字段。
+   约束：① 仅学院管理员可删除；② 归档快照只能整学年删除，不能单独改写某个批次的快照；
+   ③ 工作区至少保留 1 个批次，避免学年失去可写上下文。 */
+function canDeleteData(){return !!(state&&state.role==="admin")}
+function archiveTotals(rec){return (rec&&rec.manifest&&rec.manifest.totals)||{}}
+/* 批次数据规模（用于删除前影响范围提示） */
+function batchStats(b){
+  let versions=0,trial=0;
+  LAYERS.forEach(function(L){
+    const st=b&&b.stage&&b.stage[L],list=(st&&st.versions)||[];
+    versions+=list.length;
+    trial+=list.filter(function(v){return !v.confirmedAt}).length;
+  });
+  const pubs=(b&&b.publications)||[],objs=(b&&b.objections)||[];
+  return{
+    students:((b&&b.students)||[]).length,detail:((b&&b.detail)||[]).length,
+    quota:((b&&b.quota)||[]).length,todos:((b&&b.todos)||[]).length,
+    versions:versions,trialVersions:trial,
+    publications:pubs.length,livePublications:pubs.filter(function(p){return p.status==="公示中"}).length,
+    objections:objs.length,openObjections:objs.filter(function(o){return o.status!=="不成立"}).length
+  };
+}
+/* 删除审计：追加到 state.auditLog（不参与计算，仅留痕；上限 200 条） */
+function pushDeleteAudit(entry){
+  if(!state)return;
+  if(!Array.isArray(state.auditLog))state.auditLog=[];
+  state.auditLog.push(entry);
+  if(state.auditLog.length>200)state.auditLog=state.auditLog.slice(-200);
+}
+/* 接口①：删除整个学年的归档数据（不可恢复） */
+function deleteArchiveYear(yearId,reason){
+  if(!canDeleteData())return{ok:false,code:"no-permission",msg:"无删除权限：仅学院管理员可删除数据"};
+  const store=loadArchiveStore();
+  const rec=store.items[yearId];
+  if(!rec)return{ok:false,code:"not-found",msg:"未找到该学年的归档数据，可能已被删除"};
+  const totals=archiveTotals(rec);
+  const audit={id:"d_"+uid(),type:"archive",scope:"archive",at:new Date().toISOString(),
+    by:(ROLES[state.role]||"学院管理员"),reason:reason||"",yearId:yearId,
+    yearName:rec.yearName||yearId,target:rec.yearName||yearId,totals:clone(totals),
+    fingerprint:rec.fingerprint||""};
+  delete store.items[yearId];
+  if(!saveArchiveStore(store))return{ok:false,code:"storage",msg:"删除失败：归档库写入失败（本地存储不可用或空间不足），归档数据未删除"};
+  /* 同步工作区：清除该学年的归档标记与空壳学年，避免留下"已归档但无归档数据"的悬空只读学年 */
+  const beforeYears=clone(state.years||[]);
+  const beforeBatches=clone(state.batches||[]);
+  const beforeAudit=clone(state.auditLog||[]);
+  const beforeYearId=state.activeYearId,beforeBatch=state.activeBatch;
+  let removedYear=false;
+  try{
+    const y=yearById(yearId);
+    if(y){
+      if(yearBatches(yearId).length===0){
+        state.years=(state.years||[]).filter(function(x){return x.id!==yearId});
+        removedYear=true;
+      }else{
+        /* 异常数据（归档学年下仍有工作批次）：只清除归档标记，保留批次由其自行处理 */
+        y.status="评定中";y.archivedAt=null;y.archivedBy=null;y.archiveId=null;
+        y.fingerprint=null;y.manifest=null;y.correctionCount=0;
+      }
+    }
+    if(state.activeYearId===yearId)state.activeYearId=null;
+    pushDeleteAudit(audit);
+    ensureYears();
+    if(!save())throw new Error("工作数据保存失败");
+  }catch(e){
+    state.years=beforeYears;state.batches=beforeBatches;
+    state.auditLog=beforeAudit;
+    state.activeYearId=beforeYearId;state.activeBatch=beforeBatch;
+    const st2=loadArchiveStore();st2.items[yearId]=rec;
+    saveArchiveStore(st2);
+    try{save()}catch(e2){}
+    return{ok:false,code:"storage",msg:"删除提交后本地写入失败，已回滚归档数据："+((e&&e.message)||e)};
+  }
+  return{ok:true,audit:audit,totals:totals,removedYear:removedYear,yearName:audit.yearName};
+}
+/* 接口②：删除指定批次的数据（仅限当前可写学年内的批次） */
+function deleteBatchData(batchId,reason){
+  if(!canDeleteData())return{ok:false,code:"no-permission",msg:"无删除权限：仅学院管理员可删除数据"};
+  const b=(state.batches||[]).find(function(x){return x.id===batchId});
+  if(!b)return{ok:false,code:"not-found",msg:"未找到该批次，可能已被删除"};
+  const y=yearById(b.yearId);
+  if(!y)return{ok:false,code:"orphan",msg:"批次归属学年不存在（数据异常），已取消删除"};
+  if(isYearArchived(y))return{ok:false,code:"archived",msg:"该批次属于已归档学年：历史快照不可单独改写，请改用「删除归档数据」整体删除该学年"};
+  if(!(state.batches||[]).some(function(x){return x.id!==batchId&&x.yearId===b.yearId}))
+    return{ok:false,code:"last-batch",msg:"该学年至少需保留 1 个批次，已取消删除；如需清空整个学年，请改用「删除学年」"};
+  const counts=batchStats(b);
+  const wasActive=state.activeBatch===batchId;
+  const audit={id:"d_"+uid(),type:"batch",scope:"batch",at:new Date().toISOString(),
+    by:(ROLES[state.role]||"学院管理员"),reason:reason||"",yearId:b.yearId,yearName:y.name,
+    batchId:b.id,batchName:b.name,target:(y.name||"")+" / "+(b.name||""),counts:clone(counts)};
+  const beforeBatches=clone(state.batches||[]);
+  const beforeAudit=clone(state.auditLog||[]);
+  const beforeActive=state.activeBatch;
+  try{
+    state.batches=(state.batches||[]).filter(function(x){return x.id!==batchId});
+    if(wasActive){
+      const fb=state.batches.find(function(x){return x.yearId===b.yearId});
+      state.activeBatch=fb?fb.id:null;
+    }
+    pushDeleteAudit(audit);
+    ensureYears();
+    resetCalcScope(); /* 被删批次的计算预览随即失效，清空瞬态展示防止串显 */
+    if(!save())throw new Error("工作数据保存失败");
+  }catch(e){
+    state.batches=beforeBatches;state.auditLog=beforeAudit;state.activeBatch=beforeActive;
+    try{save()}catch(e2){}
+    return{ok:false,code:"storage",msg:"删除失败，已回滚："+((e&&e.message)||e)};
+  }
+  return{ok:true,audit:audit,counts:counts,name:b.name,wasActive:wasActive};
+}
+
+/* 接口③：删除整个学年（工作区可写学年）——级联删除其下全部批次。
+   与「删除归档」的区别：归档删除只动归档库快照；学年删除动的是工作数据（state）。
+   约束：① 仅管理员；② 已归档学年不在此处删除（历史快照须走「删除归档」）；
+   ③ 删除后必须保证仍有可写学年与至少 1 个批次，否则 B() 取不到批次会导致界面渲染异常。 */
+function deleteYearData(yearId,reason){
+  if(!canDeleteData())return{ok:false,code:"no-permission",msg:"无删除权限：仅学院管理员可删除数据"};
+  const y=yearById(yearId);
+  if(!y)return{ok:false,code:"not-found",msg:"未找到该学年，可能已被删除"};
+  if(isYearArchived(y))return{ok:false,code:"archived",msg:"该学年已归档：历史快照不可在工作区删除，请改用「删除归档」"};
+  const bs=yearBatches(yearId);
+  const counts={years:1,batches:bs.length,students:0,detail:0,quota:0,todos:0,versions:0,trialVersions:0,
+    publications:0,livePublications:0,objections:0,openObjections:0};
+  bs.forEach(function(b){
+    const s=batchStats(b);
+    counts.students+=s.students;counts.detail+=s.detail;counts.quota+=s.quota;counts.todos+=s.todos;
+    counts.versions+=s.versions;counts.trialVersions+=s.trialVersions;
+    counts.publications+=s.publications;counts.livePublications+=s.livePublications;
+    counts.objections+=s.objections;counts.openObjections+=s.openObjections;
+  });
+  const audit={id:"d_"+uid(),type:"year",scope:"year",at:new Date().toISOString(),
+    by:(ROLES[state.role]||"学院管理员"),reason:reason||"",yearId:yearId,yearName:y.name,target:y.name,
+    counts:clone(counts)};
+  const beforeYears=clone(state.years||[]);
+  const beforeBatches=clone(state.batches||[]);
+  const beforeAudit=clone(state.auditLog||[]);
+  const beforeActiveYear=state.activeYearId,beforeActiveBatch=state.activeBatch;
+  try{
+    /* 级联删除该学年及其全部批次 */
+    state.batches=(state.batches||[]).filter(function(b){return b.yearId!==yearId});
+    state.years=(state.years||[]).filter(function(x){return x.id!==yearId});
+    if(state.activeYearId===yearId)state.activeYearId=null;
+    /* 上下文兜底：若已无可写学年，按"新学年仅继承配置模板"的既有约定重建学年与首个空批次，
+       避免 activeBatch 悬空、B() 取不到批次导致渲染异常 */
+    const remain=yearList().filter(function(x){return !isYearArchived(x)});
+    if(!remain.length){
+      const nn=newYearObj(suggestNextYearName(y.name));
+      state.years.push(nn);
+      state.activeYearId=nn.id;
+      const nid=uid();
+      const nb={id:nid,name:nn.name+" · 第一批次",isDemo:false,createdAt:new Date().toISOString(),mtime:Date.now(),
+        students:[],detail:[],todos:[],quota:[],stage:{},yearId:nn.id};
+      const cfg=inheritConfig(bs[0]);
+      Object.keys(cfg).forEach(function(k){nb[k]=cfg[k]});
+      state.batches.push(nb);
+      state.activeBatch=nid;
+    }
+    pushDeleteAudit(audit);
+    ensureYears();
+    /* 极端数据兜底：当前学年若没有任何批次，补一个空批次保证界面可用 */
+    const ny=curYear();
+    if(ny&&!(state.batches||[]).some(function(b){return b.yearId===ny.id})){
+      const nid=uid();
+      state.batches.push({id:nid,name:ny.name+" · 第一批次",isDemo:false,createdAt:new Date().toISOString(),
+        mtime:Date.now(),students:[],detail:[],todos:[],quota:[],stage:{},yearId:ny.id});
+      state.activeBatch=nid;
+    }
+    resetCalcScope(); /* 被删学年的计算预览失效，清空瞬态展示防止串显 */
+    if(!save())throw new Error("工作数据保存失败");
+  }catch(e){
+    state.years=beforeYears;state.batches=beforeBatches;state.auditLog=beforeAudit;
+    state.activeYearId=beforeActiveYear;state.activeBatch=beforeActiveBatch;
+    try{save()}catch(e2){}
+    return{ok:false,code:"storage",msg:"删除失败，已回滚："+((e&&e.message)||e)};
+  }
+  return{ok:true,audit:audit,counts:counts,name:y.name,yearId:yearId};
+}
+
+/* 数据删除接口对外暴露：本项目无服务端，"接口"即数据访问层（本地归档库 + 工作数据）。
+   页面按钮与后续外部集成统一走这里，返回 {ok,msg,...}，失败不改动数据。 */
+window.PJPY_DATA_API={
+  version:1,
+  canDelete:function(){return canDeleteData()},
+  listArchives:function(){
+    return archiveList().map(function(r){return{yearId:r.yearId,yearName:r.yearName,archivedAt:r.archivedAt,
+      archivedBy:r.archivedBy,fingerprint:r.fingerprint,correctionCount:r.correctionCount||0,totals:archiveTotals(r)}});
+  },
+  archiveStats:function(yearId){const r=getArchive(yearId);return r?archiveTotals(r):null},
+  batchStats:function(batchId){const b=(state.batches||[]).find(function(x){return x.id===batchId});return b?batchStats(b):null},
+  deleteArchive:function(yearId,reason){return deleteArchiveYear(yearId,reason)},
+  deleteBatch:function(batchId,reason){return deleteBatchData(batchId,reason)},
+  deleteYear:function(yearId,reason){return deleteYearData(yearId,reason)}
+};
+
+/* ---------- 学生端：跨归档学年查询本人结果 ---------- */
+function searchArchiveStudent(sid,nm){
+  const out=[];
+  archiveList().forEach(function(rec){
+    const sn=rec.snapshot||{};
+    (sn.batches||[]).forEach(function(b){
+      (b.publications||[]).forEach(function(p){
+        if(p.status==="已撤销")return;
+        const st=b.stage&&b.stage[p.layer];
+        const v=st&&st.versions&&st.versions.find(function(x){return x.vid===p.vid});
+        if(!v)return;
+        const rows=(v.data||[]).filter(function(r){
+          return normSid(r["学号"])===sid&&String(r["姓名"]||"").replace(/\s/g,"")===nm;
+        });
+        if(rows.length)out.push({yearName:rec.yearName,archivedAt:rec.archivedAt,batchName:b.name,
+          pub:p,rows:rows,corrections:(rec.corrections||[]).length});
+      });
+    });
+  });
+  return out;
+}
+
+/* ---------- 渲染：学年与归档面板 ---------- */
+function renderArchivePanel(){
+  const box=document.getElementById("archive-list");if(!box)return;
+  const y=curYear();
+  const bs=y?yearBatches(y.id):[];
+  const stu=bs.reduce(function(s,b){return s+(b.students||[]).length},0);
+  const canDel=canDeleteData();
+  let html='<div class="arc-row"><span class="arc-badge ok">当前学年</span><div>'
+    +'<div class="t">'+esc(y?y.name:"—")+'</div>'
+    +'<div class="m">状态 '+(y?esc(y.status):"—")+' · 批次 '+bs.length+' 个 · 参评 '+stu+' 人</div></div>'
+    +'<div class="acts">'
+    +(canDel&&y?'<button class="btn btn-d btn-s" data-year-del="'+esc(y.id)+'">删除学年</button>':"")
+    +'<span class="arc-badge gray">工作区可写</span></div></div>';
+  /* 当前学年批次列表：按批次删除数据（仅管理员显示入口，接口内仍二次校验权限） */
+  if(canDel&&bs.length){
+    html+=bs.map(function(b){
+      const st=batchStats(b);
+      return '<div class="arc-row sub"><span class="arc-badge gray">批次</span><div>'
+        +'<div class="t">'+esc(b.name||b.id)+'</div>'
+        +'<div class="m">参评 '+st.students+' 人 · 明细 '+st.detail+' 条 · 版本 '+st.versions+'（试算 '+st.trialVersions+'）'
+        +' · 公示 '+st.publications+(st.livePublications?'（公示中 '+st.livePublications+'）':'')
+        +' · 异议 '+st.objections+(st.openObjections?'（未终结 '+st.openObjections+'）':'')+'</div></div>'
+        +'<div class="acts"><button class="btn btn-d btn-s" data-batch-del="'+esc(b.id)+'">删除批次</button></div></div>';
+    }).join("");
+  }
+  const items=archiveList();
+  if(!items.length){
+    html+='<div class="grid-empty" style="padding:26px 0">'+svg("db","lg")+'<p style="margin-top:8px">还没有历史学年归档</p>'
+      +'<p style="font-size:12px;color:var(--hint)">本学年评定完成、公示结束后，点击「结束本学年并归档」封存</p></div>';
+  }else{
+    items.forEach(function(rec){
+      const t=(rec.manifest&&rec.manifest.totals)||{};
+      html+='<div class="arc-row"><span class="arc-badge">已归档</span><div>'
+        +'<div class="t">'+esc(rec.yearName||rec.yearId)+'</div>'
+        +'<div class="m">归档于 '+(rec.archivedAt?esc(new Date(rec.archivedAt).toLocaleString("zh-CN")):"—")
+        +' · 操作者 '+esc(rec.archivedBy||"—")
+        +' · 批次 '+(t.batches||0)+' · 参评 '+(t.students||0)+' 人 · 版本 '+(t.versions||0)+'（试算 '+(t.trialVersions||0)+'）'
+        +' · 公示 '+(t.publications||0)+' · 异议 '+(t.objections||0)
+        +(rec.correctionCount?' · 勘误 '+rec.correctionCount+' 条':'')
+        +'</div><div class="mono">指纹 '+esc(rec.fingerprint||"—")+'</div></div>'
+        +'<div class="acts">'
+        +'<button class="btn btn-o btn-s" data-arc-view="'+esc(rec.yearId)+'">查看详情</button>'
+        +'<button class="btn btn-o btn-s" data-arc-corr="'+esc(rec.yearId)+'">追加勘误</button>'
+        +'<button class="btn btn-g btn-s" data-arc-export="'+esc(rec.yearId)+'">导出归档</button>'
+        +(canDel?'<button class="btn btn-d btn-s" data-arc-del="'+esc(rec.yearId)+'">删除归档</button>':"")
+        +'</div></div>';
+    });
+  }
+  /* 删除留痕：最近 5 条，可追溯谁在何时删除了什么 */
+  const logs=(state&&Array.isArray(state.auditLog))?state.auditLog.slice(-5).reverse():[];
+  if(logs.length){
+    html+='<div class="arc-hint" style="margin-top:10px"><b>删除日志（最近 '+logs.length+' 条）</b><br>'
+      +logs.map(function(a){
+        return esc(new Date(a.at).toLocaleString("zh-CN"))+" · "+esc(a.by||"—")+" · "
+          +(a.type==="archive"?"删除学年归档":"删除批次")+"「"+esc(a.target||a.yearName||a.batchName||a.yearId||"—")+"」"
+          +(a.reason?"（"+esc(a.reason)+"）":"");
+      }).join("<br>")+'</div>';
+  }
+  box.innerHTML=html;
+}
+
+/* ---------- 删除：学年归档（二次确认 + 影响范围） ---------- */
+function deleteArchiveModal(yearId){
+  if(!canDeleteData()){toast("无删除权限：仅学院管理员可删除数据","alert");return}
+  const rec=getArchive(yearId);
+  if(!rec){toast("未找到该学年的归档数据，可能已被删除","alert");return}
+  const t=archiveTotals(rec);
+  const nm=rec.yearName||rec.yearId;
+  modal('<h3>'+svg("alert")+'删除学年归档数据</h3>'
+    +'<p>即将<b>永久删除</b>「'+esc(nm)+'」的归档快照。<b>该操作不可撤销</b>：删除后该学年历史结果无法再回看，学生端「历年公示结果」也不再显示该学年。</p>'
+    +'<div class="arc-chk no">影响范围：批次 <b>'+(t.batches||0)+'</b> 个 · 参评 <b>'+(t.students||0)+'</b> 人 · 明细 '+(t.detail||0)
+    +' 条 · 版本 <b>'+(t.versions||0)+'</b>（试算 '+(t.trialVersions||0)+'） · 公示 '+(t.publications||0)
+    +' 个 · 异议 '+(t.objections||0)+' 条 · 勘误 '+(rec.correctionCount||0)+' 条</div>'
+    +'<div class="arc-chk no">归档于 '+(rec.archivedAt?esc(new Date(rec.archivedAt).toLocaleString("zh-CN")):"—")
+    +' · 操作者 '+esc(rec.archivedBy||"—")+'<br><span class="mono">指纹 '+esc((rec.fingerprint||"—").slice(0,16))+'…</span></div>'
+    +'<div class="arc-hint">建议先导出归档文件备份；删除动作会记入「删除日志」，但被删数据本身<b>不可恢复</b>。</div>'
+    +'<label class="fld" style="display:block;margin-top:10px">输入学年名称以确认（'+esc(nm)+'）'
+    +'<input id="del-arc-name" placeholder="请输入「'+esc(nm)+'」" autocomplete="off" spellcheck="false" style="height:40px;border:1px solid var(--border);border-radius:10px;padding:0 12px;width:100%;font-size:13px"></label>'
+    +'<label class="fld" style="display:block;margin-top:8px">删除原因（选填，写入删除日志）'
+    +'<input id="del-arc-reason" placeholder="如：重复归档 / 归档口径错误，经学院确认作废" style="height:40px;border:1px solid var(--border);border-radius:10px;padding:0 12px;width:100%;font-size:13px"></label>'
+    +'<div class="row" style="margin-top:16px"><button class="btn btn-o btn-s" id="del-arc-export">'+svg("dl","sm")+'先导出备份</button>'
+    +'<button class="btn btn-g btn-s" data-mcancel>取消</button>'
+    +'<button class="btn btn-d btn-s" data-mok disabled style="opacity:.5">确认删除</button></div>');
+  document.querySelector("[data-mcancel]").onclick=closeModal;
+  document.getElementById("del-arc-export").onclick=function(){exportArchive(yearId)};
+  const inp=document.getElementById("del-arc-name");
+  const ok=document.querySelector("[data-mok]");
+  setTimeout(()=>{try{inp.focus()}catch(e){}},30);
+  inp.addEventListener("input",function(){
+    const hit=normalizeBatchName(inp.value)===normalizeBatchName(nm);
+    ok.disabled=!hit;ok.style.opacity=hit?"1":".5";
+  });
+  ok.onclick=function(){
+    if(ok.disabled)return;
+    const reason=((document.getElementById("del-arc-reason")||{}).value||"").trim();
+    const r=deleteArchiveYear(yearId,reason);
+    if(!r.ok){toast(r.msg||"删除失败","alert");return}
+    closeModal();
+    renderAll();
+    toast("已删除「"+r.yearName+"」的归档数据（批次 "+(r.totals.batches||0)+" · 参评 "+(r.totals.students||0)+" 人）","check");
+  };
+}
+
+/* ---------- 删除：指定批次（影响范围确认） ---------- */
+function deleteBatchModal(batchId){
+  if(!canDeleteData()){toast("无删除权限：仅学院管理员可删除数据","alert");return}
+  const b=(state.batches||[]).find(function(x){return x.id===batchId});
+  if(!b){toast("未找到该批次，可能已被删除","alert");return}
+  const y=yearById(b.yearId);
+  if(!y){toast("批次归属学年不存在（数据异常），已取消删除","alert");return}
+  if(isYearArchived(y)){toast("该批次属于已归档学年：历史快照不可单独改写，请改用「删除归档数据」整体删除","alert");return}
+  if(!(state.batches||[]).some(function(x){return x.id!==batchId&&x.yearId===b.yearId})){
+    toast("该学年至少需保留 1 个批次，已取消删除；如需清空整个学年，请改用「删除学年」","alert");return;
+  }
+  const st=batchStats(b);
+  let warn="";
+  if(st.livePublications)warn+='<div class="arc-chk warn">该批次有 <b>'+st.livePublications+'</b> 个公示单处于「公示中」：已分享的学生链接将无法再查询到本人结果；云端短链数据不在本地删除范围内。</div>';
+  if(st.openObjections)warn+='<div class="arc-chk warn">该批次有 <b>'+st.openObjections+'</b> 条未终结异议，删除后异议记录一并消失。</div>';
+  modal('<h3>'+svg("alert")+'删除批次数据</h3>'
+    +'<p>即将从「'+esc(y.name)+'」删除批次「<b>'+esc(b.name||b.id)+'</b>」的全部数据。<b>该操作不可撤销</b>，删除后该批次的名单、明细、名额、待办、各层计算版本、公示单与异议都不再保留。</p>'
+    +'<div class="arc-chk no">影响范围：参评 <b>'+st.students+'</b> 人 · 明细 '+st.detail+' 条 · 名额 '+st.quota+' 行 · 待办 '+st.todos+' 条'
+    +' · 计算版本 <b>'+st.versions+'</b>（试算 '+st.trialVersions+'）<br>公示单 '+st.publications+' 个 · 异议 '+st.objections+' 条</div>'
+    +warn
+    +'<div class="arc-hint">同一学年其余批次、当前学年的其他数据与历史归档均不受影响；删除动作会记入「删除日志」。</div>'
+    +'<div class="row" style="margin-top:16px"><button class="btn btn-g btn-s" data-mcancel>取消</button>'
+    +'<button class="btn btn-d btn-s" data-mok>确认删除</button></div>');
+  document.querySelector("[data-mcancel]").onclick=closeModal;
+  document.querySelector("[data-mok]").onclick=function(){
+    const r=deleteBatchData(batchId,"面板删除批次");
+    if(!r.ok){toast(r.msg||"删除失败","alert");return}
+    closeModal();
+    if(r.wasActive)closeTool();
+    renderAll();
+    if(document.getElementById("view-tool").classList.contains("on"))renderTool();
+    toast("已删除批次「"+r.name+"」（版本 "+(r.counts.versions||0)+" · 参评 "+(r.counts.students||0)+" 人）","check");
+  };
+}
+
+/* ---------- 删除：整个学年（级联删除其下批次 + 二次确认） ---------- */
+function deleteYearModal(yearId){
+  if(!canDeleteData()){toast("无删除权限：仅学院管理员可删除数据","alert");return}
+  const y=yearById(yearId);
+  if(!y){toast("未找到该学年，可能已被删除","alert");return}
+  if(isYearArchived(y)){toast("该学年已归档：历史快照不可在工作区删除，请改用「删除归档」","alert");return}
+  const bs=yearBatches(yearId);
+  let counts={batches:bs.length,students:0,detail:0,todos:0,versions:0,trialVersions:0,publications:0,livePublications:0,objections:0,openObjections:0};
+  bs.forEach(function(b){
+    const s=batchStats(b);
+    counts.students+=s.students;counts.detail+=s.detail;counts.todos+=s.todos;
+    counts.versions+=s.versions;counts.trialVersions+=s.trialVersions;
+    counts.publications+=s.publications;counts.livePublications+=s.livePublications;
+    counts.objections+=s.objections;counts.openObjections+=s.openObjections;
+  });
+  let warn="";
+  if(counts.livePublications)warn+='<div class="arc-chk warn">该学年有 <b>'+counts.livePublications+'</b> 个公示单处于「公示中」：已分享的学生链接将无法再查询到本人结果；云端短链数据不在本地删除范围内。</div>';
+  if(counts.openObjections)warn+='<div class="arc-chk warn">该学年有 <b>'+counts.openObjections+'</b> 条未终结异议，删除后异议记录一并消失。</div>';
+  modal('<h3>'+svg("alert")+'删除整个学年</h3>'
+    +'<p>即将删除学年「<b>'+esc(y.name||y.id)+'</b>」及其下 <b>'+counts.batches+'</b> 个批次的全部数据。<b>该操作不可撤销</b>：名单、明细、名额、待办、各层计算版本、公示单与异议均不保留。</p>'
+    +'<div class="arc-chk no">影响范围：批次 <b>'+counts.batches+'</b> 个 · 参评 <b>'+counts.students+'</b> 人 · 明细 '+counts.detail
+    +' 条 · 待办 '+counts.todos+' 条 · 计算版本 <b>'+counts.versions+'</b>（试算 '+counts.trialVersions+'）'
+    +'<br>公示单 '+counts.publications+' 个 · 异议 '+counts.objections+' 条</div>'
+    +warn
+    +'<div class="arc-hint">该学年尚未归档，删除后<b>无法再作为历史学年回看</b>；删除完成后系统会自动建立新的可写学年（仅继承配置模板），历史归档数据不受影响。删除动作会记入「删除日志」。</div>'
+    +'<label class="fld" style="display:block;margin-top:10px">输入学年名称以确认（'+esc(y.name||y.id)+'）'
+    +'<input id="del-year-name" placeholder="请输入「'+esc(y.name||y.id)+'」" autocomplete="off" spellcheck="false" style="height:40px;border:1px solid var(--border);border-radius:10px;padding:0 12px;width:100%;font-size:13px"></label>'
+    +'<label class="fld" style="display:block;margin-top:8px">删除原因（选填，写入删除日志）'
+    +'<input id="del-year-reason" placeholder="如：学年建错，重新建档" style="height:40px;border:1px solid var(--border);border-radius:10px;padding:0 12px;width:100%;font-size:13px"></label>'
+    +'<div class="row" style="margin-top:16px"><button class="btn btn-g btn-s" data-mcancel>取消</button>'
+    +'<button class="btn btn-d btn-s" data-mok disabled style="opacity:.5">确认删除</button></div>');
+  document.querySelector("[data-mcancel]").onclick=closeModal;
+  const inp=document.getElementById("del-year-name");
+  const ok=document.querySelector("[data-mok]");
+  setTimeout(()=>{try{inp.focus()}catch(e){}},30);
+  inp.addEventListener("input",function(){
+    const hit=normalizeBatchName(inp.value)===normalizeBatchName(y.name||y.id);
+    ok.disabled=!hit;ok.style.opacity=hit?"1":".5";
+  });
+  ok.onclick=function(){
+    if(ok.disabled)return;
+    const reason=((document.getElementById("del-year-reason")||{}).value||"").trim();
+    const r=deleteYearData(yearId,reason);
+    if(!r.ok){toast(r.msg||"删除失败","alert");return}
+    closeModal();
+    closeTool(); /* 学年已整体删除，工具页上下文失效，直接退出 */
+    renderAll();
+    toast("已删除学年「"+r.name+"」（批次 "+(r.counts.batches||0)+" · 参评 "+(r.counts.students||0)+" 人），已建立新的可写学年","check");
+  };
+}
+
+/* ---------- 归档向导：前置校验 → 二次确认 → 执行 ---------- */
+function showArchiveBlocked(checks){
+  const bad=checks.filter(function(c){return !c.ok});
+  modal('<h3>'+svg("alert")+'无法归档：前置条件未满足</h3>'
+    +'<p>归档要求本学年的评定、公示与异议全部收口。以下 '+bad.length+' 项未通过，归档已被整体阻断，当前学年数据未发生任何改动。</p>'
+    +checks.map(function(c){return '<div class="arc-chk '+(c.ok?"ok":"no")+'">'+(c.ok?"✓":"✕")+" "+esc(c.lb)+(c.detail?"<br>"+esc(c.detail):"")+"</div>"}).join("")
+    +'<div class="row"><button class="btn btn-p btn-s" data-mok>知道了</button></div>');
+  document.querySelector("[data-mok]").onclick=closeModal;
+}
+function archiveWizard(){
+  const y=curYear();
+  if(!y){toast("没有可归档的学年","alert");return}
+  const checks=archiveChecks(y);
+  if(checks.some(function(c){return !c.ok})){showArchiveBlocked(checks);return}
+  const bs=yearBatches(y.id);
+  const t=bs.reduce(function(s,b){return s+(b.students||[]).length},0);
+  modal('<h3>'+svg("lock")+'结束本学年并归档</h3>'
+    +'<p>将把「'+esc(y.name)+'」下的 <b>'+bs.length+'</b> 个批次、参评 <b>'+t+'</b> 人、全部评定版本（含未确认的试算版本）、规则配置、公示单与异议，封存为<b>不可变快照</b>并移出工作数据。<br>归档后该学年不可再编辑；如需更正只能追加勘误记录。</p>'
+    +checks.map(function(c){
+      const show=/规则配置/.test(c.lb)&&c.detail;
+      return '<div class="arc-chk ok">✓ '+esc(c.lb)
+        +(show?'<br><span style="font-size:11px;opacity:.85">'+esc(c.detail)+'</span>':"")+'</div>';
+    }).join("")
+    +'<label class="fld" style="display:block;margin-top:10px">归档原因（写入归档记录）'
+    +'<input id="ar-reason" placeholder="如：本学年评定完成，公示期已结束" style="height:40px;border:1px solid var(--border);border-radius:10px;padding:0 12px;width:100%;font-size:13px"></label>'
+    +'<div class="row" style="margin-top:16px"><button class="btn btn-g btn-s" data-mcancel>取消</button><button class="btn btn-d btn-s" data-mok>确认归档</button></div>');
+  document.querySelector("[data-mcancel]").onclick=closeModal;
+  document.querySelector("[data-mok]").onclick=function(){
+    const el=document.getElementById("ar-reason");
+    const reason=((el&&el.value)||"").trim();
+    closeModal();
+    const r=archiveYear(y.id,reason);
+    if(!r.ok){toast(r.msg,"alert");renderAll();return}
+    if(r.idempotent){toast(r.msg,"check");renderAll();return}
+    toast("「"+y.name+"」已归档并独立封存；已自动建立新学年「"+(r.newYear?r.newYear.name:"")+"」","check");
+    renderAll();
+  };
+}
+
+/* ---------- 历史学年只读详情 ---------- */
+function showArchiveDetail(yearId){
+  const rec=getArchive(yearId);
+  if(!rec){toast("未找到该学年的归档","alert");return}
+  const sn=rec.snapshot||{};
+  const mf=rec.manifest||{batches:[],totals:{}};
+  let h='<h3>'+svg("lock")+"历史学年 · "+esc(rec.yearName||rec.yearId)+'</h3>'
+    +'<p>以下为<b>归档时刻的只读快照</b>，不受当前学年任何操作影响。归档于 '+(rec.archivedAt?esc(new Date(rec.archivedAt).toLocaleString("zh-CN")):"—")
+    +' · 操作者 '+esc(rec.archivedBy||"—")+(rec.reason?"<br>归档原因："+esc(rec.reason):"")+'</p>'
+    +'<div class="mono">归档指纹 '+esc(rec.fingerprint||"—")+' · 结构版本 v'+esc(rec.schemaVersion||1)+' · 勘误 '+(rec.correctionCount||0)+' 条</div>';
+  h+='<div class="arc-sec"><h4>归档清单</h4><table class="arc-tbl"><thead><tr><th>批次</th><th class="num">参评</th><th class="num">明细</th><th class="num">名额</th><th class="num">版本(试算)</th><th class="num">公示</th><th class="num">异议</th></tr></thead><tbody>'
+    +(mf.batches||[]).map(function(r){return "<tr><td>"+esc(r.name)+"</td><td class='num'>"+r.students+"</td><td class='num'>"+r.detail+"</td><td class='num'>"+r.quota+"</td><td class='num'>"+r.versions+"("+r.trialVersions+")</td><td class='num'>"+r.publications+"</td><td class='num'>"+r.objections+"</td></tr>"}).join("")
+    +"</tbody></table></div>";
+  /* 规则口径：展示归档时固化的生效规则，说明哪些批次用的是系统默认配置 */
+  const defs=mf.defaultRuleBatches||[];
+  h+='<div class="arc-sec"><h4>规则口径（归档时固化）</h4>'
+    +'<div class="arc-hint">快照已固化每个批次实际生效的综测权重、等级阈值与各项评定规则；使用系统默认配置的批次也按当时生效值写入，历史结果不随后续默认规则调整而变化。</div>'
+    +(defs.length?'<table class="arc-tbl"><thead><tr><th>批次</th><th>按默认值固化的规则</th><th>综测权重（智/德/文/能）</th></tr></thead><tbody>'
+      +defs.map(function(d){
+        const b=(sn.batches||[]).find(function(x){return x.id===d.id})||{};
+        const w=b.rankWeights||{};
+        return "<tr><td>"+esc(d.name)+"</td><td>"+esc((d.fields||[]).join("、"))+"</td><td class='num'>"
+          +esc(w.z==null?"—":w.z)+" / "+esc(w.d==null?"—":w.d)+" / "+esc(w.w==null?"—":w.w)+" / "+esc(w.n==null?"—":w.n)+"</td></tr>";
+      }).join("")+"</tbody></table>"
+      :'<div class="arc-hint">全部批次均为用户显式保存的规则配置。</div>')
+    +"</div>";
+  (sn.batches||[]).forEach(function(b){
+    const rows=[];
+    LAYERS.forEach(function(L){
+      const st=b.stage&&b.stage[L];
+      ((st&&st.versions)||[]).forEach(function(v){
+        rows.push("<tr><td>"+pubLayerLb(L)+"</td><td>"+esc(v.vid)+"</td><td>"
+          +(v.confirmedAt?esc(new Date(v.confirmedAt).toLocaleDateString("zh-CN")):"<span style='color:var(--warn)'>未确认（试算）</span>")
+          +"</td><td>"+((st.activeVid===v.vid)?"<span class='arc-badge ok'>使用中</span>":"—")+"</td><td class='num'>"+((v.data||[]).length)
+          +"</td><td class='mono'>"+esc(v.dataHash||"—")+"</td></tr>");
+      });
+    });
+    h+='<div class="arc-sec"><h4>'+esc(b.name)+" · 版本明细（"+rows.length+" 份，含未确认试算版本）</h4>"
+      +(rows.length?'<table class="arc-tbl"><thead><tr><th>层</th><th>版本</th><th>确认时间</th><th>状态</th><th class="num">条数</th><th>指纹</th></tr></thead><tbody>'+rows.join("")+"</tbody></table>":'<div class="arc-hint">该批次尚无版本</div>')+"</div>";
+    const pubs=b.publications||[];
+    if(pubs.length){
+      h+='<div class="arc-sec"><h4>'+esc(b.name)+" · 公示单（"+pubs.length+"）</h4><table class='arc-tbl'><thead><tr><th>标题</th><th>层/版本</th><th>公示期</th><th>状态</th></tr></thead><tbody>"
+        +pubs.map(function(p){return "<tr><td>"+esc(p.title)+"</td><td>"+esc(p.layer)+"/"+esc(p.vid)+"</td><td>"+esc(p.start||"—")+" ~ "+esc(p.end||"—")+"</td><td>"+esc(p.status||"—")+"</td></tr>"}).join("")
+        +"</tbody></table></div>";
+    }
+    const objs=b.objections||[];
+    if(objs.length){
+      h+='<div class="arc-sec"><h4>'+esc(b.name)+" · 异议（"+objs.length+"）</h4><table class='arc-tbl'><thead><tr><th>学号</th><th>姓名</th><th>状态</th><th>内容</th></tr></thead><tbody>"
+        +objs.map(function(o){return "<tr><td>"+esc(o.sid||"—")+"</td><td>"+esc(o.name||"—")+"</td><td>"+esc(o.status||"—")+"</td><td>"+esc(String(o.content||"").slice(0,80))+"</td></tr>"}).join("")
+        +"</tbody></table></div>";
+    }
+  });
+  const cor=rec.corrections||[];
+  h+='<div class="arc-sec"><h4>勘误链（'+cor.length+'）</h4>'
+    +(cor.length?'<table class="arc-tbl"><thead><tr><th>时间</th><th>对象</th><th>更正</th><th>原因</th><th>操作者</th></tr></thead><tbody>'
+      +cor.map(function(c){return "<tr><td>"+esc(new Date(c.at).toLocaleString("zh-CN"))+"</td><td>"+esc(c.target)+"</td><td>"+esc(c.before)+" → "+esc(c.after)+"</td><td>"+esc(c.reason||"—")+"</td><td>"+esc(c.by||"—")+"</td></tr>"}).join("")
+      +"</tbody></table>":'<div class="arc-hint">无勘误记录</div>')+"</div>";
+  h+='<div class="row" style="margin-top:16px"><button class="btn btn-g btn-s" data-mcancel>关闭</button><button class="btn btn-o btn-s" data-mok>追加勘误</button></div>';
+  modal(h);
+  const m=document.getElementById("modal");
+  if(m){m.classList.add("xwide");syncModalScroll()}
+  document.querySelector("[data-mcancel]").onclick=closeModal;
+  document.querySelector("[data-mok]").onclick=function(){closeModal();correctionModal(yearId)};
+}
+
+/* ---------- 勘误录入 ---------- */
+function correctionModal(yearId){
+  const rec=getArchive(yearId);
+  if(!rec){toast("未找到该学年的归档","alert");return}
+  modal('<h3>'+svg("edit")+"追加勘误 · "+esc(rec.yearName||rec.yearId)+'</h3>'
+    +'<p>归档快照<b>永不改写</b>。此处追加的是独立勘误记录：回看历史结果时会标注「存在勘误」，原始值仍完整保留，归档指纹不变。</p>'
+    +'<div style="display:flex;flex-direction:column;gap:10px">'
+    +'<input id="cr-target" placeholder="对象：如 批次名 · L5 · v2 · 学号2023001 · 最终评定奖学金" style="height:42px;border:1px solid var(--border);border-radius:10px;padding:0 12px;font-size:13px">'
+    +'<div style="display:flex;gap:10px">'
+    +'<input id="cr-before" placeholder="原值" style="flex:1;height:42px;border:1px solid var(--border);border-radius:10px;padding:0 12px;font-size:13px">'
+    +'<input id="cr-after" placeholder="更正为" style="flex:1;height:42px;border:1px solid var(--border);border-radius:10px;padding:0 12px;font-size:13px"></div>'
+    +'<input id="cr-reason" placeholder="更正原因（必填）" style="height:42px;border:1px solid var(--border);border-radius:10px;padding:0 12px;font-size:13px">'
+    +'</div>'
+    +'<div class="row" style="margin-top:16px"><button class="btn btn-g btn-s" data-mcancel>取消</button><button class="btn btn-p btn-s" data-mok>追加勘误</button></div>');
+  document.querySelector("[data-mcancel]").onclick=closeModal;
+  document.querySelector("[data-mok]").onclick=function(){
+    const target=(document.getElementById("cr-target").value||"").trim();
+    const reason=(document.getElementById("cr-reason").value||"").trim();
+    if(!target){toast("请填写勘误对象","alert");return}
+    if(!reason){toast("请填写更正原因","alert");return}
+    const r=addCorrection(yearId,{target:target,before:document.getElementById("cr-before").value,
+      after:document.getElementById("cr-after").value,reason:reason});
+    if(!r.ok){toast(r.msg,"alert");return}
+    closeModal();toast("勘误已追加；原始快照与归档指纹未改动","check");renderArchivePanel();
+  };
+}
+
+/* ---------- 新建学年 / 新建批次 ---------- */
+function newYearModal(){
+  const y=curYear();
+  const dflt=y?suggestNextYearName(y.name):("新建学年 "+todayStr());
+  modal('<h3>'+svg("plus")+'新建学年</h3>'
+    +'<p>新学年<b>只继承配置与结构模板</b>（权重、阈值、名额模板、字段口径），业务数据（名单、明细、版本、公示、异议）全部为空。历史学年数据不受影响。</p>'
+    +'<input id="ny-name" value="'+esc(dflt)+'" placeholder="如：2026-2027学年" style="height:44px;border:1px solid var(--border);border-radius:10px;padding:0 12px;width:100%;font-size:13px;margin-bottom:18px">'
+    +'<div class="row"><button class="btn btn-g btn-s" data-mcancel>取消</button><button class="btn btn-p btn-s" data-mok>创建</button></div>');
+  document.querySelector("[data-mcancel]").onclick=closeModal;
+  document.querySelector("[data-mok]").onclick=function(){
+    const nm=(document.getElementById("ny-name").value||"").trim();
+    if(!nm){toast("学年名称不能为空","alert");return}
+    const src=(y&&yearBatches(y.id)[0])||null;
+    const ny=newYearObj(nm);
+    state.years.push(ny);
+    const id=uid();
+    const nb={id:id,name:nm+" · 第一批次",isDemo:false,createdAt:new Date().toISOString(),mtime:Date.now(),
+      students:[],detail:[],todos:[],quota:[],stage:{},yearId:ny.id};
+    const cfg=inheritConfig(src);
+    Object.keys(cfg).forEach(function(k){nb[k]=cfg[k]});
+    state.batches.push(nb);
+    state.activeYearId=ny.id;state.activeBatch=id;
+    ensureYears();save();closeModal();renderAll();
+    toast("已创建新学年「"+nm+"」（仅继承配置模板）","check");
+  };
+}
+/* 批次名称归一化：去除零宽字符与首尾空白；全空白字符输入归一化后为空 → 视为未填写 */
+function normalizeBatchName(v){return String(v==null?"":v).replace(/[\u200B-\u200D\uFEFF]/g,"").trim()}
+/* 批次名称 → 文件名安全片段：结果/版本 CSV 下载文件名携带批次名，便于按批次区分文件 */
+function batchFileTag(){
+  const b=(typeof B==="function")?B():null;
+  return String((b&&b.name)||"").replace(/[\\/:*?"<>|\r\n\t ]+/g,"-").slice(0,40)||"批次";
+}
+/* 实际创建批次：名称保存在批次对象上；各层计算结果（stage 版本）挂在同一批次下，
+   结果查看（工具页头部、版本明细弹窗、下载文件名、归档回看）均以该名称区分批次 */
+function createBatch(y,name){
+  const id=uid();
+  const nb={id:id,name:name,isDemo:false,createdAt:new Date().toISOString(),mtime:Date.now(),
+    students:[],detail:[],todos:[],quota:[],stage:{},yearId:y.id};
+  const cfg=inheritConfig(yearBatches(y.id)[0]);
+  Object.keys(cfg).forEach(function(k){nb[k]=cfg[k]});
+  state.batches.push(nb);
+  state.activeBatch=id;
+  resetCalcScope(); /* 新批次从零开始：清空上一批次遗留的"最近一次计算"瞬态展示 */
+  ensureYears();save();renderAll();
+  toast("已在「"+y.name+"」下创建批次「"+name+"」","check");
+  return nb;
+}
+/* 新建批次：先进入"批次名称输入与确认"步骤，不再点击后立即创建。
+   - 名称必填且不能只包含空白字符，未填写时阻止创建并提示；
+   - 取消 / 关闭弹窗（遮罩点击、Esc）均不创建批次；
+   - 仅确认有效名称后才调用 createBatch()，保持学年、归档与计算流程不变。 */
+function newBatch(){
+  const y=curYear();
+  if(!y){toast("没有可用的学年","alert");return}
+  const n=yearBatches(y.id).length+1;
+  const dflt=y.name+" · 批次"+n;
+  modal('<h3>'+svg("plus")+'新建批次</h3>'
+    +'<p>请先输入批次名称（<b>必填</b>，不能只包含空白字符）。名称将与该批次的全部计算结果关联，用于在结果查看、版本明细与归档回看中区分不同批次。建议命名为「'+esc(dflt)+'」这类可辨识名称。</p>'
+    +'<input id="nb-name" value="" placeholder="如：'+esc(dflt)+'" maxlength="60" style="height:44px;border:1px solid var(--border);border-radius:10px;padding:0 12px;width:100%;font-size:13px">'
+    +'<div id="nb-err" style="display:none;color:var(--bad);font-size:12px;margin-top:6px"></div>'
+    +'<div id="nb-dup" style="display:none;color:var(--warn);font-size:12px;margin-top:6px"></div>'
+    +'<div class="row" style="margin-top:16px"><button class="btn btn-g btn-s" data-mcancel>取消</button><button class="btn btn-p btn-s" data-mok>确认创建</button></div>');
+  document.querySelector("[data-mcancel]").onclick=closeModal;
+  const inp=document.getElementById("nb-name");
+  const err=document.getElementById("nb-err");
+  const dup=document.getElementById("nb-dup");
+  setTimeout(()=>{try{inp.focus()}catch(e){}},30);
+  inp.addEventListener("input",()=>{
+    const nm=normalizeBatchName(inp.value);
+    err.style.display="none";
+    const clash=nm&&yearBatches(y.id).some(function(b){return b.name===nm});
+    dup.textContent=clash?"注意：该学年下已存在同名批次，重名会使结果不易区分，建议换一个名称。":"";
+    dup.style.display=clash?"block":"none";
+  });
+  const ok=()=>{
+    const nm=normalizeBatchName(inp.value);
+    if(!nm){
+      err.textContent="请输入批次名称（不能为空，也不能只包含空白字符）";
+      err.style.display="block";
+      toast("请输入批次名称","alert");
+      try{inp.focus()}catch(e){}
+      return;
+    }
+    createBatch(y,nm);
+    closeModal();
+  };
+  document.querySelector("[data-mok]").onclick=ok;
+  inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();ok()}});
+}
+function switchYear(yearId){
+  const y=yearById(yearId);
+  if(!y)return;
+  if(y.status==="已归档"){toast("该学年已归档，请在「数据与工具 → 学年与归档」中回看只读快照","alert");return}
+  state.activeYearId=yearId;
+  const fb=yearBatches(yearId)[0];
+  if(fb)state.activeBatch=fb.id;
+  resetCalcScope(); /* 学年（连带批次）切换：清空瞬态计算展示，防止跨学年/跨批次串显 */
+  ensureYears();save();renderAll();
+  if(document.getElementById("view-tool").classList.contains("on"))renderTool();
+}
+
+
 function todayStr(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 
@@ -881,9 +1917,11 @@ function exampleState(){
     const r=detail.find(x=>x[2]===sid);
     return Object.assign({"学号":sid,"姓名":r[3],"年级":r[6],"班级":r[7]},DEMO[sid]||{});
   });
+  const y0=newYearObj("2025-2026学年");y0.id="y1";y0.batchIds=["b1"];
   return {
-    version:1,role:"admin",activeBatch:"b1",favs:["zongce"],__mtime:Date.now(),
-    batches:[{id:"b1",name:"2025-2026学年 第一学期",isDemo:true,createdAt:new Date().toISOString(),mtime:Date.now(),
+    version:1,role:"admin",activeBatch:"b1",activeYearId:"y1",favs:["zongce"],__mtime:Date.now(),
+    years:[y0],
+    batches:[{id:"b1",yearId:"y1",name:"2025-2026学年 第一学期",isDemo:true,createdAt:new Date().toISOString(),mtime:Date.now(),
       students,detail,
       todos:[
         {id:uid(),title:"补交暑期社会实践获奖证明（陈晓、林悦等 5 人）",due:"2026-08-28",status:"open",type:"custom"},
@@ -918,11 +1956,29 @@ function migrate(){(state.batches||[]).forEach(b=>{
     if(!b.publications)b.publications=[];
     if(!b.objections)b.objections=[];
     (b.students||[]).forEach(s=>{if(s.mtime===undefined)s.mtime=Date.now()})})
+  ensureYears();   /* 学年化：补齐学年实体与批次归属（存量批次归入当前学年） */
 }
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state));touchState();flashSync();scheduleSync()}catch(e){toast("保存失败：本地存储不可用","alert")}}
+/* 当前上下文是否只读（历史学年不可写） */
+function ctxReadOnly(){
+  const ys=yearList();
+  const act=ys.find(function(y){return y.id===state.activeYearId});
+  return !!act&&isYearArchived(act);
+}
+function save(){
+  if(!_sysWrite&&ctxReadOnly()){try{toast("当前学年已归档（只读），无法写入；请切换到可写学年","alert")}catch(e){}return false}
+  try{localStorage.setItem(KEY,JSON.stringify(state));touchState();flashSync();scheduleSync();return true}
+  catch(e){toast("保存失败：本地存储不可用","alert");return false}
+}
 let syncT=null;
 function flashSync(){const c=document.getElementById("sync-txt");c.textContent="本地已保存";clearTimeout(syncT)}
-function B(){const b=state.batches.find(x=>x.id===state.activeBatch)||state.batches[0];if(b&&b.schemaVersion!==2)migrateBatch(b);return b}
+function B(){
+  /* 批次取用范围收敛到当前学年：避免跨学年误写（归档后历史批次已不在 state 内） */
+  const bs=state.batches||[];const yid=state.activeYearId;
+  const b=bs.find(x=>x.id===state.activeBatch&&(!yid||x.yearId===yid))
+    ||bs.find(x=>!yid||x.yearId===yid)
+    ||bs[0];
+  if(b&&b.schemaVersion!==2)migrateBatch(b);return b
+}
 function stNum(b){return b.students.filter(s=>s["学号"]).length}
 function L1(b){if(!b.stage.l1||!b.stage.l1.versions)b.stage.l1={versions:[],activeVid:null};return b.stage.l1}
 function l1Done(b){return L1(b).versions.length>0}
@@ -2960,11 +4016,26 @@ function applyL8Version(batch,vid){
 }
 
 /* ================= 渲染：首页 ================= */
-function renderAll(){renderHeader();renderTodos();renderPipeline();renderStats();renderFavs();renderCats();renderTools();renderDataView();renderBase();renderPub()}
+function renderAll(){renderHeader();renderTodos();renderPipeline();renderStats();renderFavs();renderCats();renderTools();renderDataView();renderArchivePanel();renderBase();renderPub()}
 
 function renderHeader(){
+  const y=curYear();
+  /* 学年选择器：仅列出可写学年；已归档学年在「数据与工具 → 学年与归档」中以只读方式回看 */
+  const ySel=document.getElementById("year-sel");
+  if(ySel){
+    const ys=yearList().filter(function(x){return !isYearArchived(x)});
+    ySel.innerHTML=ys.map(function(x){return '<option value="'+x.id+'"'+(y&&x.id===y.id?" selected":"")+">"+esc(x.name)+"</option>"}).join("");
+    ySel.disabled=ys.length<2;
+  }
+  /* 批次选择器：仅列出当前学年下的批次（一学年可含多批次） */
   const sel=document.getElementById("batch-sel");
-  if(sel)sel.innerHTML=state.batches.map(b=>'<option value="'+b.id+'"'+(b.id===state.activeBatch?" selected":"")+">"+b.name+"</option>").join("");
+  if(sel){
+    const bs=y?yearBatches(y.id):[];
+    sel.innerHTML=bs.map(function(b){return '<option value="'+b.id+'"'+(b.id===state.activeBatch?" selected":"")+">"+esc(b.name)+"</option>"}).join("");
+    sel.disabled=bs.length<2;
+  }
+  const tag=document.getElementById("ctx-year-tag");
+  if(tag){tag.textContent="学年 · "+(y?y.name:"—")+(y?" · "+y.status:"");tag.className="ctx-tag "+(y&&y.status==="已归档"?"warn":"ok")}
   document.getElementById("role-sel").value=state.role;
   const roleTxt=ROLES[state.role]||"学院管理员";
   const sr=document.getElementById("side-role");if(sr)sr.textContent=roleTxt;
@@ -3060,7 +4131,7 @@ function renderStats(){
    {v:todayDone,k:"今日已完成数",sub:"累计完成 "+done.length+" 项"}
   ];
   document.getElementById("stats").innerHTML=cards.map(c=>'<div class="stat"><div class="v">'+c.v+'</div><div class="k">'+c.k+'</div><div class="sub">'+c.sub+"</div></div>").join("");
-  document.getElementById("stat-batch").textContent="评定批次："+B().name;
+  document.getElementById("stat-batch").textContent="评定批次："+((B()||{}).name||"—");
 }
 
 function renderFavs(){
@@ -3862,6 +4933,18 @@ let l5Cov=null;  /* 工具⑤最近一次计算的参评覆盖情况 */
 let l6Cov=null;  /* 工具⑥最近一次计算的参评覆盖情况 */
 let l7Cov=null;  /* 工具⑦最近一次计算的参评覆盖情况 */
 let l8Cov=null;  /* 工具⑧最近一次计算的参评覆盖情况 */
+/* ---------- 瞬态计算展示按批次隔离 ----------
+   calc*Results / l*Cov / tool*Report 是"最近一次计算"的页面级瞬态展示（不落盘）。
+   新建或切换批次时统一清空，避免把上一批次的计算结果串显到当前批次，
+   确保查看结果时始终以当前批次（及其名称）为准。只清展示态，不动任何落盘版本与计算逻辑。 */
+function resetCalcScope(){
+  calcResults=calc2Results=calc3Results=calc4Results=null;
+  calc5Results=calc6Results=calc7Results=calc8Results=null;
+  l1Cov=l2Cov=l3Cov=l4Cov=l5Cov=l6Cov=l7Cov=l8Cov=null;
+  toolReport={};tool2Report={};tool3Report={};tool4Report={};
+  tool5Report={};tool6Report={};tool7Report={};tool8Report={};
+  showReimport=false;
+}
 function toolErr(msg){
   const map={"bad_type":"仅支持 .csv 与 .xlsx 文件","xlsx_lib_fail":"解析库加载失败（当前离线？）。请改用 CSV 文件，或联网后重试","xlsx_parse_fail":"XLSX 解析失败，请检查文件是否损坏","load_fail":"解析库加载失败，请改用 CSV 文件","load_bad":"解析库版本异常，请改用 CSV 文件","timeout":"解析库加载超时，请改用 CSV 文件"};
   const slot=document.getElementById("tool-err");
@@ -3947,14 +5030,14 @@ function versionTableHTML(data){
 function dlL1Version(v){
   const head=["学号","姓名","现在年级","班级","品德原始加分","文体原始加分","能力原始加分"].join(",");
   const rows=v.data.map(r=>[r["学号"],r["姓名"],r["现在年级"]||"",r["班级"]||"",r["品德原始加分"],r["文体原始加分"],r["能力原始加分"]].join(","));
-  download("原始加分层_"+v.vid+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
+  download("原始加分层_"+batchFileTag()+"_"+v.vid+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
 }
 function viewL1Version(vid,onBack){
   const b=B();const v=L1(b).versions.find(x=>x.vid===vid);
   if(!v){toast("未找到版本 "+vid,"alert");return}
   const used=L1(b).activeVid===vid;
   const stb=used?'<span class="st-badge done">使用中</span>':v.confirmedAt?'<span class="st-badge locked">曾确认于 '+new Date(v.confirmedAt).toLocaleString("zh-CN")+'</span>':'<span class="st-badge pending">待确认</span>';
-  modal('<h3>'+svg("file")+'版本 '+vid+' · 数据明细</h3>'
+  modal('<h3>'+svg("file")+'版本 '+vid+' · 数据明细（批次 '+esc(B().name||"—")+'）</h3>'
    +'<div class="sum-row" style="margin-bottom:10px;flex-wrap:wrap"><span>计算时间 '+new Date(v.at).toLocaleString("zh-CN")+'</span><span>'+v.summary.count+' 人</span>'
    +'<span>品德合计 '+v.summary.sumD+'</span><span>文体合计 '+v.summary.sumW+'</span><span>能力合计 '+v.summary.sumN+'</span><span>计算人 '+(v.by||"—")+'</span></div>'
    +'<div style="margin-bottom:10px">'+stb+"</div>"
@@ -4021,7 +5104,7 @@ function bindTool(){
   if(q("#tool-dl"))q("#tool-dl").onclick=()=>{
     const head=["学号","姓名","现在年级","班级","品德原始加分","文体原始加分","能力原始加分"].join(",");
     const rows=calcResults.map(r=>[r["学号"],r["姓名"],r["现在年级"],r["班级"],r["品德原始加分"],r["文体原始加分"],r["能力原始加分"]].join(","));
-    download("综测加分结果_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));};
+    download("综测加分结果_"+batchFileTag()+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));};
 }
 
 /* ================= 工具视图②：各模块最终加分计算 ================= */
@@ -4417,14 +5500,14 @@ function dlL2Version(v){
     r["品德原始加分"],r["文体原始加分"],r["能力原始加分"],
     r["品德原始测评分"],r["文体原始测评分"],r["能力原始测评分"],
     r["品德最终测评分"],r["文体最终测评分"],r["能力最终测评分"]].join(","));
-  download("最终测分层_"+v.vid+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
+  download("最终测分层_"+batchFileTag()+"_"+v.vid+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
 }
 function viewL2Version(vid,onBack){
   const b=B();const v=L2(b).versions.find(x=>x.vid===vid);
   if(!v){toast("未找到版本 "+vid,"alert");return}
   const used=L2(b).activeVid===vid;
   const stb=used?'<span class="st-badge done">使用中</span>':v.confirmedAt?'<span class="st-badge locked">曾确认于 '+new Date(v.confirmedAt).toLocaleString("zh-CN")+'</span>':'<span class="st-badge pending">待确认</span>';
-  modal('<h3>'+svg("file")+'版本 '+vid+' · 数据明细</h3>'
+  modal('<h3>'+svg("file")+'版本 '+vid+' · 数据明细（批次 '+esc(B().name||"—")+'）</h3>'
    +'<div class="sum-row" style="margin-bottom:10px;flex-wrap:wrap"><span>计算时间 '+new Date(v.at).toLocaleString("zh-CN")+'</span><span>基于 L1 '+(v.summary.l1Vid||"—")+'</span><span>'+v.summary.count+' 人</span>'
    +'<span>'+v.summary.groups+' 个分组</span><span>平均最终 品德 '+v.summary.avgD+' / 文体 '+v.summary.avgW+' / 能力 '+v.summary.avgN+'</span><span>平均总成绩 '+v.summary.avgTotal+'</span><span>计算人 '+(v.by||"—")+'</span></div>'
    +'<div style="margin-bottom:10px">'+stb+"</div>"
@@ -4492,7 +5575,7 @@ function bindTool2(){
     const rows=calc2Results.map(r=>[r["学号"],r["姓名"],r["年级"],r["班级"],r["专业"],r["专业类型"],
       r["品德原始测评分"],r["文体原始测评分"],r["能力原始测评分"],
       r["品德最终测评分"],r["文体最终测评分"],r["能力最终测评分"]].join(","));
-    download("最终测分结果_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));};
+    download("最终测分结果_"+batchFileTag()+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));};
   body.querySelectorAll("[data-v2use]").forEach(btn=>{
     btn.onclick=()=>{
       const vid=btn.dataset.v2use;
@@ -4744,7 +5827,7 @@ function bindTool3(){
       r["智育测评"],r["品德最终测评分"],r["文体最终测评分"],r["能力最终测评分"],
       r["综测总成绩"],r["班级排名"],r["班级人数"],
       r["同年级同专业同类型排名"],r["同年级同专业同类型人数"],r["综测排名比例"]].map(csvCell).join(","));
-    download("综测排名结果_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));};
+    download("综测排名结果_"+batchFileTag()+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));};
   body.querySelectorAll("[data-v3use]").forEach(btn=>{
     btn.onclick=()=>{
       const vid=btn.dataset.v3use;
@@ -4817,14 +5900,14 @@ function dlL3Version(v){
     r["智育测评"],r["品德最终测评分"],r["文体最终测评分"],r["能力最终测评分"],
     r["综测总成绩"],r["班级排名"],r["班级人数"],
     r["同年级同专业同类型排名"],r["同年级同专业同类型人数"],r["综测排名比例"]].map(csvCell).join(","));
-  download("综测排名层_"+v.vid+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
+  download("综测排名层_"+batchFileTag()+"_"+v.vid+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
 }
 function viewL3Version(vid,onBack){
   const b=B();const v=L3(b).versions.find(x=>x.vid===vid);
   if(!v){toast("未找到版本 "+vid,"alert");return}
   const used=L3(b).activeVid===vid;
   const stb=used?'<span class="st-badge done">使用中</span>':v.confirmedAt?'<span class="st-badge locked">曾确认于 '+new Date(v.confirmedAt).toLocaleString("zh-CN")+'</span>':'<span class="st-badge pending">待确认</span>';
-  modal('<h3>'+svg("file")+'版本 '+vid+' · 数据明细</h3>'
+  modal('<h3>'+svg("file")+'版本 '+vid+' · 数据明细（批次 '+esc(B().name||"—")+'）</h3>'
    +'<div class="sum-row" style="margin-bottom:10px;flex-wrap:wrap"><span>计算时间 '+new Date(v.at).toLocaleString("zh-CN")+'</span><span>基于 L2 '+(v.summary.l2Vid||"—")+'</span><span>'+v.summary.count+' 人</span>'
    +'<span>'+v.summary.classes+' 个班级</span><span>'+v.summary.groups+' 个分组</span><span>权重 '+v.summary.weight+'</span><span>平均总成绩 '+v.summary.avgTotal+'</span><span>计算人 '+(v.by||"—")+'</span></div>'
    +'<div style="margin-bottom:10px">'+stb+"</div>"
@@ -5011,7 +6094,7 @@ function bindTool4(){
       r["同年级同专业同类型排名"],r["同年级同专业同类型人数"],
       r["是否挂科"],r["是否处分"],r["体测挂科"],
       r["奖学金符合等级"],r["是否符合"]].map(csvCell).join(","));
-    download("符合等级结果_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));};
+    download("符合等级结果_"+batchFileTag()+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));};
   body.querySelectorAll("[data-v4use]").forEach(btn=>{
     btn.onclick=()=>{
       const vid=btn.dataset.v4use;
@@ -5085,14 +6168,14 @@ function dlL4Version(v){
     r["同年级同专业同类型排名"],r["同年级同专业同类型人数"],
     r["是否挂科"],r["是否处分"],r["体测挂科"],
     r["奖学金符合等级"],r["是否符合"]].map(csvCell).join(","));
-  download("符合等级层_"+v.vid+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
+  download("符合等级层_"+batchFileTag()+"_"+v.vid+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
 }
 function viewL4Version(vid,onBack){
   const b=B();const v=L4(b).versions.find(x=>x.vid===vid);
   if(!v){toast("未找到版本 "+vid,"alert");return}
   const used=L4(b).activeVid===vid;
   const stb=used?'<span class="st-badge done">使用中</span>':v.confirmedAt?'<span class="st-badge locked">曾确认于 '+new Date(v.confirmedAt).toLocaleString("zh-CN")+'</span>':'<span class="st-badge pending">待确认</span>';
-  modal('<h3>'+svg("file")+'版本 '+vid+' · 数据明细</h3>'
+  modal('<h3>'+svg("file")+'版本 '+vid+' · 数据明细（批次 '+esc(B().name||"—")+'）</h3>'
    +'<div class="sum-row" style="margin-bottom:10px;flex-wrap:wrap"><span>计算时间 '+new Date(v.at).toLocaleString("zh-CN")+'</span><span>基于 L3 '+(v.summary.l3Vid||"—")+'</span><span>'+v.summary.count+' 人</span>'
    +'<span>一等 '+v.summary.lv1+'</span><span>二等 '+v.summary.lv2+'</span><span>三等 '+v.summary.lv3+'</span><span>不符合 '+v.summary.unfit+'</span><span>'+v.summary.rulesText+'</span><span>计算人 '+(v.by||"—")+'</span></div>'
    +'<div style="margin-bottom:10px">'+stb+"</div>"
@@ -5299,7 +6382,7 @@ function bindTool5(){
     const rows=calc5Results.map(r=>[r["学号"],r["姓名"],r["年级"],r["班级"],r["专业"],r["专业类型"],
       r["班级排名"],r["综测排名比例"],r["同年级同专业同类型排名"],r["同年级同专业同类型人数"],r["综测总成绩"],r["智育测评成绩"],
       r["奖学金符合等级"],r["是否符合"],r["最终评定奖学金"],r["等级来源"]].map(csvCell).join(","));
-    download("最终认定结果_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
+    download("最终认定结果_"+batchFileTag()+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
   };
   body.querySelectorAll("[data-v5use]").forEach(btn=>{
     btn.onclick=()=>{
@@ -5370,14 +6453,14 @@ function dlL5Version(v){
   const rows=v.data.map(r=>[r["学号"],r["姓名"],r["年级"],r["班级"],r["专业"],r["专业类型"],
     r["班级排名"],r["综测排名比例"],r["同年级同专业同类型排名"],r["同年级同专业同类型人数"],r["综测总成绩"],r["智育测评成绩"],
     r["奖学金符合等级"],r["是否符合"],r["最终评定奖学金"],r["等级来源"]].map(csvCell).join(","));
-  download("最终认定层_"+v.vid+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
+  download("最终认定层_"+batchFileTag()+"_"+v.vid+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
 }
 function viewL5Version(vid,onBack){
   const b=B();const v=L5(b).versions.find(x=>x.vid===vid);
   if(!v){toast("未找到版本 "+vid,"alert");return}
   const used=L5(b).activeVid===vid;
   const stb=used?'<span class="st-badge done">使用中</span>':v.confirmedAt?'<span class="st-badge locked">曾确认于 '+new Date(v.confirmedAt).toLocaleString("zh-CN")+'</span>':'<span class="st-badge pending">待确认</span>';
-  modal('<h3>'+svg("file")+'版本 '+vid+' · 数据明细</h3>'
+  modal('<h3>'+svg("file")+'版本 '+vid+' · 数据明细（批次 '+esc(B().name||"—")+'）</h3>'
    +'<div class="sum-row" style="margin-bottom:10px;flex-wrap:wrap"><span>计算时间 '+new Date(v.at).toLocaleString("zh-CN")+'</span><span>基于 L4 '+(v.summary.l4Vid||"—")+'</span><span>'+v.summary.count+' 人</span>'
    +'<span>一等 '+v.summary.lv1+'</span><span>二等 '+v.summary.lv2+'</span><span>三等 '+v.summary.lv3+'</span><span>无 '+v.summary.none+'</span><span>名额缺班 '+(v.summary.clsMissing||0)+'</span><span>'+esc(v.summary.quotaText||"")+'</span><span>计算人 '+(v.by||"—")+'</span></div>'
    +'<div style="margin-bottom:10px">'+stb+"</div>"
@@ -5697,7 +6780,7 @@ function bindTool6(){
     const rows=calc6Results.map(r=>[r["学号"],r["姓名"],r["年级"],r["班级"],r["专业"],r["专业类型"],
       r["系统班级排名"],r["班级排名"],r["班级人数"],r["最终评定奖学金"],r["体育成绩"],r["智育测评"],r["综测总成绩"],r["体测挂科"],r["是否处分"],r["是否挂科"],
       r["学年综测班级排名比例"],r["等级来源"],r["班级排名来源"],r["是否符合三好学生"]].map(csvCell).join(","));
-    download("三好学生评定结果_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
+    download("三好学生评定结果_"+batchFileTag()+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
   };
   body.querySelectorAll("[data-v6use]").forEach(btn=>{
     btn.onclick=()=>{
@@ -5771,14 +6854,14 @@ function dlL6Version(v){
   const rows=v.data.map(r=>[r["学号"],r["姓名"],r["年级"],r["班级"],r["专业"],r["专业类型"],
     r["系统班级排名"],r["班级排名"],r["班级人数"],r["最终评定奖学金"],r["体育成绩"],r["智育测评"],r["综测总成绩"],r["体测挂科"],r["是否处分"],r["是否挂科"],
     r["学年综测班级排名比例"],r["等级来源"],r["班级排名来源"],r["是否符合三好学生"]].map(csvCell).join(","));
-  download("三好学生评定语_"+v.vid+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
+  download("三好学生评定语_"+batchFileTag()+"_"+v.vid+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
 }
 function viewL6Version(vid,onBack){
   const b=B();const v=L6(b).versions.find(x=>x.vid===vid);
   if(!v){toast("未找到版本 "+vid,"alert");return}
   const used=L6(b).activeVid===vid;
   const stb=used?'<span class="st-badge done">使用中</span>':v.confirmedAt?'<span class="st-badge locked">曾确认于 '+new Date(v.confirmedAt).toLocaleString("zh-CN")+'</span>':'<span class="st-badge pending">待确认</span>';
-  modal('<h3>'+svg("file")+'版本 '+vid+' · 数据明细</h3>'
+  modal('<h3>'+svg("file")+'版本 '+vid+' · 数据明细（批次 '+esc(B().name||"—")+'）</h3>'
    +'<div class="sum-row" style="margin-bottom:10px;flex-wrap:wrap"><span>计算时间 '+new Date(v.at).toLocaleString("zh-CN")+'</span><span>基于 L5 '+(v.summary.l5Vid||"—")+'</span><span>'+v.summary.count+' 人</span>'
    +'<span>符合 '+v.summary.pass+'</span><span>不符合 '+v.summary.fail+'</span><span>符合率 '+v.summary.rate+'</span>'
    +'<span>非一/二等奖 '+(v.summary.notSch||0)+'</span><span>体育&lt;80 '+(v.summary.sports||0)+'</span><span>智育&lt;80 '+(v.summary.zy||0)+'</span><span>排名比&gt;0.10 '+(v.summary.rank||0)+'</span>'
@@ -5955,7 +7038,7 @@ function bindTool7(){
     const rows=calc7Results.map(r=>[r["学号"],r["姓名"],r["年级"],r["班级"],r["专业"],r["专业类型"],
       r["班级排名"],r["班级人数"],r["品德最终测评分"],r["学年综测班级排名比例"],r["品德测评班级排名比例"],r["是否符合三好学生"],r["是否为学生干部"],
       r["体测挂科"],r["是否处分"],r["是否挂科"],r["是否符合优秀学生干部"]].map(csvCell).join(","));
-    download("优秀学生干部评定结果_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
+    download("优秀学生干部评定结果_"+batchFileTag()+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
   };
   body.querySelectorAll("[data-v7use]").forEach(btn=>{
     btn.onclick=()=>{
@@ -6028,14 +7111,14 @@ function dlL7Version(v){
   const rows=v.data.map(r=>[r["学号"],r["姓名"],r["年级"],r["班级"],r["专业"],r["专业类型"],
     r["班级排名"],r["班级人数"],r["品德最终测评分"],r["学年综测班级排名比例"],r["品德测评班级排名比例"],r["是否符合三好学生"],r["是否为学生干部"],
     r["体测挂科"],r["是否处分"],r["是否挂科"],r["是否符合优秀学生干部"]].map(csvCell).join(","));
-  download("优秀学生干部评定_"+v.vid+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
+  download("优秀学生干部评定_"+batchFileTag()+"_"+v.vid+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
 }
 function viewL7Version(vid,onBack){
   const b=B();const v=L7(b).versions.find(x=>x.vid===vid);
   if(!v){toast("未找到版本 "+vid,"alert");return}
   const used=L7(b).activeVid===vid;
   const stb=used?'<span class="st-badge done">使用中</span>':v.confirmedAt?'<span class="st-badge locked">曾确认于 '+new Date(v.confirmedAt).toLocaleString("zh-CN")+'</span>':'<span class="st-badge pending">待确认</span>';
-  modal('<h3>'+svg("file")+'版本 '+vid+' · 数据明细</h3>'
+  modal('<h3>'+svg("file")+'版本 '+vid+' · 数据明细（批次 '+esc(B().name||"—")+'）</h3>'
    +'<div class="sum-row" style="margin-bottom:10px;flex-wrap:wrap"><span>计算时间 '+new Date(v.at).toLocaleString("zh-CN")+'</span><span>基于 L6 '+(v.summary.l6Vid||"—")+'</span><span>'+v.summary.count+' 人</span>'
    +'<span>符合 '+v.summary.pass+'</span><span>不符合 '+v.summary.fail+'</span><span>符合率 '+v.summary.rate+'</span>'
    +'<span>综测比&gt;0.30 '+(v.summary.comp||0)+'</span><span>品德比&gt;0.30 '+(v.summary.moral||0)+'</span><span>体测挂科 '+(v.summary.pe||0)+'</span>'
@@ -6225,7 +7308,7 @@ function bindTool8(){
       r["第一学期智育成绩"],r["第二学期智育成绩"],r["第一学期智育成绩排名"],r["第二学期智育成绩排名"],
       r["第二学期与第一学期排名之比"],r["是否贫困生"],r["最终评定奖学金"],r["是否有综合奖学金"],
       r["体测挂科"],r["是否处分"],r["是否挂科"],r["是否符合行知专业奖学金"]].map(csvCell).join(","));
-    download("行知专业奖学金评定结果_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
+    download("行知专业奖学金评定结果_"+batchFileTag()+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
   };
   body.querySelectorAll("[data-v8use]").forEach(btn=>{
     btn.onclick=()=>{
@@ -6296,14 +7379,14 @@ function dlL8Version(v){
     r["第一学期智育成绩"],r["第二学期智育成绩"],r["第一学期智育成绩排名"],r["第二学期智育成绩排名"],
     r["第二学期与第一学期排名之比"],r["是否贫困生"],r["最终评定奖学金"],r["是否有综合奖学金"],
     r["体测挂科"],r["是否处分"],r["是否挂科"],r["是否符合行知专业奖学金"]].map(csvCell).join(","));
-  download("行知专业奖学金评定_"+v.vid+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
+  download("行知专业奖学金评定_"+batchFileTag()+"_"+v.vid+"_"+todayStr()+".csv","\uFEFF"+head+"\n"+rows.join("\n"));
 }
 function viewL8Version(vid,onBack){
   const b=B();const v=L8(b).versions.find(x=>x.vid===vid);
   if(!v){toast("未找到版本 "+vid,"alert");return}
   const used=L8(b).activeVid===vid;
   const stb=used?'<span class="st-badge done">使用中</span>':v.confirmedAt?'<span class="st-badge locked">曾确认于 '+new Date(v.confirmedAt).toLocaleString("zh-CN")+'</span>':'<span class="st-badge pending">待确认</span>';
-  modal('<h3>'+svg("file")+'版本 '+vid+' · 数据明细</h3>'
+  modal('<h3>'+svg("file")+'版本 '+vid+' · 数据明细（批次 '+esc(B().name||"—")+'）</h3>'
    +'<div class="sum-row" style="margin-bottom:10px;flex-wrap:wrap"><span>计算时间 '+new Date(v.at).toLocaleString("zh-CN")+'</span><span>基于 L5 '+(v.summary.l5Vid||"—")+'</span><span>'+v.summary.count+' 人</span>'
    +'<span>基础合格 '+v.summary.base+'</span><span>符合 '+v.summary.pass+'</span><span>名额 '+v.summary.quota+'（贫困 '+v.summary.poor+'）</span>'
    +'<span>入选 贫困 '+(v.summary.poorPass||0)+' / 非贫困 '+(v.summary.nonPoorPass||0)+'</span>'
@@ -6407,7 +7490,23 @@ function renameBatch(){
 }
 
 /* ================= 全局事件 ================= */
-const bsEl=document.getElementById("batch-sel");if(bsEl)bsEl.addEventListener("change",e=>{state.activeBatch=e.target.value;baseMsg=null;baseSearch="";save();renderAll()});
+const bsEl=document.getElementById("batch-sel");if(bsEl)bsEl.addEventListener("change",e=>{state.activeBatch=e.target.value;baseMsg=null;baseSearch="";resetCalcScope();save();renderAll();if(document.getElementById("view-tool").classList.contains("on"))renderTool()});
+/* 学年切换：仅可写学年可切换；已归档学年以只读快照回看 */
+const ySelEl=document.getElementById("year-sel");if(ySelEl)ySelEl.addEventListener("change",e=>{switchYear(e.target.value)});
+/* 学年与归档面板 */
+const arcBtn=document.getElementById("btn-archive-year");if(arcBtn)arcBtn.addEventListener("click",archiveWizard);
+const nyBtn=document.getElementById("btn-new-year");if(nyBtn)nyBtn.addEventListener("click",newYearModal);
+const nbBtn=document.getElementById("btn-new-batch");if(nbBtn)nbBtn.addEventListener("click",newBatch);
+const aiBtn=document.getElementById("btn-archive-import");if(aiBtn)aiBtn.addEventListener("click",()=>{const f=document.getElementById("archive-file");if(f)f.click()});
+const afEl=document.getElementById("archive-file");if(afEl)afEl.addEventListener("change",e=>{handleArchiveFile(e.target.files[0]);e.target.value=""});
+const arcList=document.getElementById("archive-list");if(arcList)arcList.addEventListener("click",e=>{
+  const d=e.target.closest("[data-arc-del]");if(d){deleteArchiveModal(d.dataset.arcDel);return}
+  const yd=e.target.closest("[data-year-del]");if(yd){deleteYearModal(yd.dataset.yearDel);return}
+  const bd=e.target.closest("[data-batch-del]");if(bd){deleteBatchModal(bd.dataset.batchDel);return}
+  const v=e.target.closest("[data-arc-view]");if(v){showArchiveDetail(v.dataset.arcView);return}
+  const c=e.target.closest("[data-arc-corr]");if(c){correctionModal(c.dataset.arcCorr);return}
+  const x=e.target.closest("[data-arc-export]");if(x){exportArchive(x.dataset.arcExport);return}
+});
 document.getElementById("role-sel").addEventListener("change",e=>{state.role=e.target.value;save();renderAll();toast("已切换为「"+ROLES[state.role]+"」视角","user")});
 document.getElementById("btn-add-todo").addEventListener("click",promptTodo);
 const atp=document.getElementById("btn-add-todo-page");if(atp)atp.addEventListener("click",promptTodo);
@@ -6576,7 +7675,20 @@ document.getElementById("btn-import").onclick=()=>document.getElementById("impor
 document.getElementById("import-file").addEventListener("change",e=>{
   const f=e.target.files[0];if(!f)return;
   f.text().then(t=>{try{const s=JSON.parse(t);
-    if(!s.batches)throw 0;state=s;save();renderAll();toast("数据已恢复","check");
+    if(!s.batches)throw 0;
+    /* 归档库独立于备份：已归档学年的批次不回灌工作区，避免与封存快照重复 */
+    const arch={};archiveList().forEach(r=>{arch[r.yearId]=1});
+    const dropped=(s.batches||[]).filter(b=>b.yearId&&arch[b.yearId]).length;
+    if(dropped)s.batches=(s.batches||[]).filter(b=>!(b.yearId&&arch[b.yearId]));
+    /* 备份里一个批次都没有时补一个空批次，避免出现无批次的空工作区 */
+    if(!s.batches.length)s.batches=[{id:uid(),yearId:null,name:"新建批次 "+new Date().toLocaleDateString("zh-CN"),
+      students:[],detail:[],todos:[],quota:[],stage:{},mtime:Date.now()}];
+    /* 导入归一化：补齐缺失字段，避免旧备份字段不全导致渲染异常 */
+    if(!Array.isArray(s.favs))s.favs=(state&&Array.isArray(state.favs))?state.favs:[];
+    if(!ROLES[s.role])s.role="admin";
+    if(!Array.isArray(s.years))s.years=[];
+    state=s;ensureYears();save();renderAll();
+    toast(dropped?("数据已恢复（"+dropped+" 个已归档学年批次未回灌，历史归档不受影响）"):"数据已恢复（历史学年归档不受影响）","check");
   }catch(err){toast("备份文件格式不正确","alert")}});
   e.target.value="";
 });
@@ -6587,8 +7699,13 @@ document.getElementById("btn-clear-demo").onclick=()=>{
 };
 function emptyState(){
   const id=uid();
-  return {version:1,role:"admin",activeBatch:id,favs:state.favs,
-    batches:[{id,name:"新建批次 "+new Date().toLocaleDateString("zh-CN"),students:[],detail:[],todos:[],quota:[],stage:{},mtime:Date.now()}]};
+  /* 清空业务数据但保留学年结构；已归档学年同时保存在独立归档库中，不受影响 */
+  const ys=(state.years&&state.years.length)?clone(state.years):[newYearObj("新建学年 "+todayStr())];
+  let yid=state.activeYearId;
+  if(!ys.some(function(y){return y.id===yid}))yid=ys[0].id;
+  ys.forEach(function(y){y.batchIds=(y.id===yid)?[id]:[]});
+  return {version:1,role:"admin",activeBatch:id,activeYearId:yid,favs:state.favs,years:ys,
+    batches:[{id:id,yearId:yid,name:"新建批次 "+new Date().toLocaleDateString("zh-CN"),students:[],detail:[],todos:[],quota:[],stage:{},mtime:Date.now()}]};
 }
 
 /* ==================== 云同步引擎（零后端 / GitHub 私有 Gist） ==================== */
@@ -6671,15 +7788,20 @@ function mergeBatch(lb,rb){
       const lc=confirmedAt(lv),rc=confirmedAt(rv);
       if(rc&&(!lc||newer(rc,lc)))lv.activeVid=rv.activeVid;}
   });
+  /* 学年归属随批次同步（归档库不在同步载荷内，历史学年不会被远端反向写入） */
+  if(rb.yearId&&!lb.yearId)lb.yearId=rb.yearId;
 }
 function mergeStates(local,remote){
   if(!local)return clone(remote||{});
   if(!remote)return clone(local);
   const m=clone(local);
   // 顶层标量：__mtime 较新一方胜出
-  if(newer(remote.__mtime,local.__mtime)){m.__mtime=remote.__mtime;m.role="admin";m.activeBatch=remote.activeBatch}
+  if(newer(remote.__mtime,local.__mtime)){m.__mtime=remote.__mtime;m.role="admin";m.activeBatch=remote.activeBatch;m.activeYearId=remote.activeYearId||m.activeYearId}
   else if(m.__mtime===undefined)m.__mtime=remote.__mtime||local.__mtime||Date.now();
   if(Array.isArray(remote.favs)){const set=new Set((m.favs||[]).concat(remote.favs));m.favs=[...set]}
+  // 学年按 id 并集（归档库独立存储，不进入同步载荷，历史学年不会被远端覆盖）
+  const lym={};(m.years||[]).forEach(y=>lym[y.id]=y);
+  (remote.years||[]).forEach(ry=>{if(!lym[ry.id]){lym[ry.id]=clone(ry);(m.years=m.years||[]).push(lym[ry.id])}});
   // 批次按 id 并集
   const lmap={};(m.batches||[]).forEach(b=>lmap[b.id]=b);
   (remote.batches||[]).forEach(rb=>{if(lmap[rb.id])mergeBatch(lmap[rb.id],rb);else(m.batches=m.batches||[]).push(clone(rb))});
@@ -6727,8 +7849,9 @@ async function pullMergePush(fetchFn){
     let remote=null;
     if(getSyncCode()){try{remote=await getGist(fetchFn)}catch(e){remote=null}}
     const merged=mergeStates(state,remote);
-    const changed=JSON.stringify(merged)!==JSON.stringify(state);
-    state=merged;
+    const before=JSON.stringify(state);
+    state=merged;ensureYears();          /* 学年边界：批次归属与当前批次一致性 */
+    const changed=JSON.stringify(state)!==before;
     if(changed)localStorage.setItem(KEY,JSON.stringify(state));
     const newCode=await putGist(state,fetchFn);
     localStorage.setItem(SYNC_KEY_CODE,newCode);
@@ -7004,6 +8127,15 @@ function getPubFromState(pubId){
     const p=(b.publications||[]).find(x=>x.id===pubId);
     if(p)return {batch:b,pub:p};
   }
+  /* 已归档学年的公示单：快照独立保存于归档库，本地预览同样可解析 */
+  const items=archiveList();
+  for(let i=0;i<items.length;i++){
+    const bs=(items[i].snapshot&&items[i].snapshot.batches)||[];
+    for(let j=0;j<bs.length;j++){
+      const p=(bs[j].publications||[]).find(x=>x.id===pubId);
+      if(p)return {batch:bs[j],pub:p,archived:true,yearName:items[i].yearName};
+    }
+  }
   return null;
 }
 let _pqState={qid:"",qname:"",matched:null,classFilter:"",nameFilter:""};
@@ -7081,6 +8213,29 @@ function renderPubQuery(){
   renderPubQueryBody(ctx);
 }
 
+/* 学生端：历年归档结果卡片（仅本人、仅已公示学年） */
+function renderArchiveHistory(hist){
+  let h='<div class="pq-section" style="margin-top:14px"><h3>历年公示结果（归档只读）</h3>';
+  h+=hist.map(function(it){
+    const p=it.pub;
+    return '<div class="pq-person"><div class="nm">'+esc(it.yearName)+' · '+esc(it.batchName)+'</div>'
+      +'<div class="pq-kv"><span>公示层级 / 版本</span><b>'+esc(p.layer)+' / '+esc(p.vid)+'</b></div>'
+      +'<div class="pq-kv"><span>公示期</span><b>'+esc(p.start||"—")+(p.end?" ~ "+esc(p.end):"")+'</b></div>'
+      +'<div class="pq-kv"><span>归档时间</span><b>'+esc(it.archivedAt?new Date(it.archivedAt).toLocaleDateString("zh-CN"):"—")+'</b></div>'
+      +it.rows.map(function(r){
+        const ks=(p.cols||[]).filter(function(k){return k!=="学号"&&k!=="姓名"});
+        return ks.map(function(k){
+          const val=(r[k]==null||r[k]==="")?"—":r[k];
+          return '<div class="pq-kv"><span>'+esc(k)+'</span><b>'+esc(val)+'</b></div>';
+        }).join("");
+      }).join("")
+      +(it.corrections?'<div class="pq-kv priority"><span>数据状态</span><b>存在勘误 '+it.corrections+' 条</b></div>':"")
+      +'</div>';
+  }).join("");
+  h+='<div class="pq-tip" style="margin-top:8px">历史学年数据为归档时的只读快照，不随当前学年变动。</div></div>';
+  return h;
+}
+
 function renderPubQueryBody(ctx){
   const {batch,pub,v}=ctx;
   const titleEl=document.getElementById("pq-title"),metaEl=document.getElementById("pq-meta");
@@ -7140,30 +8295,39 @@ function renderPubQueryBody(ctx){
     const resultBox=document.getElementById("pq-result");
     if(!sid||!nm){resultBox.innerHTML='<div class="pq-tip warn">请同时输入学号和姓名</div>';return}
     const hits=allRows.filter(r=>normSid(r["学号"])===sid&&String(r["姓名"]||"").replace(/\s/g,"")===nm);
-    if(!hits.length){resultBox.innerHTML='<div class="pq-tip miss">未查询到匹配结果：请核对学号与姓名。如确认无误仍查不到，请通过下方渠道反馈。</div>';return}
-    _pqState.matched=hits[0];
+    /* 历年归档结果：仅本人、仅已公示学年（读归档库，不依赖外部短链有效性） */
+    const hist=searchArchiveStudent(sid,nm);
+    if(!hits.length&&!hist.length){resultBox.innerHTML='<div class="pq-tip miss">未查询到匹配结果：请核对学号与姓名。如确认无误仍查不到，请通过下方渠道反馈。</div>';return}
     const priorityCols=pub.priorityCols||[];
-    resultBox.innerHTML=hits.map(r=>{
-      const ks=pub.cols.filter(k=>k!=="学号"&&k!=="姓名");
-      // 优先字段排前面，普通字段在后
-      const sortedKs=[...ks].sort((a,b)=>{
-        const aP=priorityCols.includes(a)?0:1;
-        const bP=priorityCols.includes(b)?0:1;
-        return aP-bP;
-      });
-      return '<div class="pq-person"><div class="nm">'+esc(r["姓名"])+" · "+esc(r["学号"])+'</div>'
-        +sortedKs.map(k=>{
-          const isPriority=priorityCols.includes(k);
-          const val=r[k]==null||r[k]===""?"—":r[k];
-          return isPriority
-            ?'<div class="pq-kv priority"><span>'+esc(k)+'</span><b>'+esc(val)+'</b></div>'
-            :'<div class="pq-kv"><span>'+esc(k)+'</span><b>'+esc(val)+'</b></div>';
-        }).join("")
-        +'</div>';
-    }).join("");
-    // 显示同学成绩区域
-    document.getElementById("pq-mates-section").style.display="block";
-    renderClassmates();
+    let body="";
+    if(hits.length){
+      _pqState.matched=hits[0];
+      body=hits.map(r=>{
+        const ks=pub.cols.filter(k=>k!=="学号"&&k!=="姓名");
+        // 优先字段排前面，普通字段在后
+        const sortedKs=[...ks].sort((a,b)=>{
+          const aP=priorityCols.includes(a)?0:1;
+          const bP=priorityCols.includes(b)?0:1;
+          return aP-bP;
+        });
+        return '<div class="pq-person"><div class="nm">'+esc(r["姓名"])+" · "+esc(r["学号"])+'</div>'
+          +sortedKs.map(k=>{
+            const isPriority=priorityCols.includes(k);
+            const val=r[k]==null||r[k]===""?"—":r[k];
+            return isPriority
+              ?'<div class="pq-kv priority"><span>'+esc(k)+'</span><b>'+esc(val)+'</b></div>'
+              :'<div class="pq-kv"><span>'+esc(k)+'</span><b>'+esc(val)+'</b></div>';
+          }).join("")
+          +'</div>';
+      }).join("");
+    }
+    if(hist.length)body+=renderArchiveHistory(hist);
+    resultBox.innerHTML=body;
+    if(hits.length){
+      // 显示同学成绩区域
+      document.getElementById("pq-mates-section").style.display="block";
+      renderClassmates();
+    }
   };
   goBtn.onclick=doQuery;
   ["pq-sid","pq-name"].forEach(id=>document.getElementById(id).addEventListener("keydown",e=>{if(e.key==="Enter")doQuery()}));
