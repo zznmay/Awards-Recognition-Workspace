@@ -9822,6 +9822,17 @@ function maskPhone(v){
   if(d.length!==11)return d?("****"+d.slice(-4)):"";
   return d.slice(0,3)+"****"+d.slice(-4);
 }
+/* 从会话/资料对象里取手机号：SDK 的 getSession() 返回的 user 只有 id/name/avatarUrl，
+   手机号仅存在于 getUser()（userMe）的返回中，故此处做多层兜底，避免界面误显示「未登录」。 */
+function userPhone(user){
+  var u=user||{},raw=u.raw||{},meta=u.user_metadata||raw.user_metadata||{};
+  var cands=[u.phone,u.phone_number,raw.phone_number,raw.phone,meta.phone,meta.phone_number];
+  for(var i=0;i<cands.length;i++){
+    var d=String(cands[i]==null?"":cands[i]).replace(/\D/g,"");
+    if(d.length>=7)return maskPhone(d);
+  }
+  return "";
+}
 function errText(e,fallback){
   var m=String((e&&e.message)||e||""),k=String((e&&(e.kind||e.code))||"");
   if(/expire|过期/i.test(m+k))return "验证码已过期，请重新获取";
@@ -9968,8 +9979,9 @@ async function submitLogin(){
     var s=await cloud().auth.getSession();
     if(s.error)throw s.error;
     if(!s.data)throw new Error("登录状态未建立，请重试");
+    var known=_pendingOtp&&_pendingOtp.phone;
     _pendingOtp=null;
-    await enterApp(s.data);
+    await enterApp(s.data,known);
   }catch(e){
     var msg=errText(e,"登录失败");
     /* 验证码类错误贴在验证码输入框下方；网络类错误走顶部提示条 */
@@ -10074,14 +10086,29 @@ function setAcctState(t){var el=document.getElementById("acct-state");if(el)el.t
 function setAcctTime(t){var el=document.getElementById("acct-time");if(el)el.textContent=t||"—"}
 function updateAccountUI(){
   var phone=localStorage.getItem(SKEY_PHONE)||"";
+  if(!phone)phone=userPhone(_session&&_session.user);
   var dev=deviceLabel();
-  ["uc-phone","um-phone","acct-phone"].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=phone||"未登录"});
-  var st=document.getElementById("side-tel");if(st)st.textContent=phone||"未登录";
+  var label=phone||(_session?"已登录账号":"未登录");
+  ["uc-phone","um-phone","acct-phone"].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=label});
+  var st=document.getElementById("side-tel");if(st)st.textContent=label;
   var de=document.getElementById("acct-device");if(de)de.textContent=dev;
   var ms=document.getElementById("um-state");
   if(ms)ms.textContent=_session?("已登录 · "+dev):"未登录";
   var dot=document.getElementById("um-dot");
   if(dot)dot.className="dot"+(_lastPushOk?"":(_session?" warn":" err"));
+}
+/* getSession() 不含手机号：登录后补拉一次 getUser()（userMe）并回写本地缓存，界面随即刷新 */
+async function healAccountPhone(){
+  if(!_session)return;
+  try{
+    var me=await cloud().auth.getUser();
+    var p=me&&me.data?userPhone(me.data):"";
+    if(!p)return;
+    var uid=String((_session.user&&_session.user.id)||"");
+    localStorage.setItem(SKEY_PHONE,p);
+    if(uid)localStorage.setItem(SKEY_OWNER,uid);
+    updateAccountUI();
+  }catch(e){/* 静默：取不到手机号不影响登录态与云端同步 */}
 }
 function closeUserMenu(){
   var e=document.getElementById("account-entry");
@@ -10091,10 +10118,12 @@ function closeUserMenu(){
 }
 
 /* ---------- 登录成功：合并云端数据并解锁 ---------- */
-async function enterApp(session){
+async function enterApp(session,knownPhone){
   var user=(session&&session.user)||{};
   var uid=String(user.id||"");
-  var phone=maskPhone(user.phone||"");
+  var phone=userPhone(user);
+  if(!phone)phone=maskPhone(knownPhone||"");
+  if(!phone&&uid&&(localStorage.getItem(SKEY_OWNER)||"")===uid)phone=maskPhone(localStorage.getItem(SKEY_PHONE)||"");
   var prevOwner=localStorage.getItem(SKEY_OWNER)||"";
   if(prevOwner&&uid&&prevOwner!==uid){
     /* 换账号：清掉上一个账号留在本机的工作数据与归档库，防止跨账号串数据 */
@@ -10130,6 +10159,7 @@ async function enterApp(session){
   document.body.classList.remove("auth-locked");
   try{renderAll()}catch(e){}
   updateAccountUI();
+  if(!phone)healAccountPhone();          /* 会话内无手机号时补拉一次用户资料（不阻塞解锁） */
   setAcctState(row&&row.payload?"已同步":"已建立备份");
   setAcctTime(row&&row.updated_at?fmtTime(row.updated_at):"—");
 
@@ -10183,6 +10213,7 @@ async function doLogout(){
   document.body.classList.add("auth-locked");
   resetAgForm();
   showAgForm();
+  updateAccountUI();                       /* 清空账号回显，避免退出后残留上一个手机号 */
   try{window.scrollTo(0,0)}catch(e){}
   setAgAlert("已退出登录。同一手机号重新登录即可恢复云端数据。","info");
 }
