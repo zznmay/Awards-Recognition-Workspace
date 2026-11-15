@@ -11,6 +11,7 @@ Desktop.ini
 .idea/
 .zcode/
 .workbuddy/
+*.genie
 *.swp
 *.swo
 *~
@@ -33,6 +34,8 @@ build/
 备份_*.json
 *_备份_*.json
 评奖评优归档_*.json
+评奖评优归档_*.zip
 归档_*.json
+归档_*.zip
 data/
 exports/
