@@ -773,9 +773,120 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   .ctx-sel{min-width:0;max-width:150px;font-size:12px}
   .sync{display:none}
 }
+/* ============ 账号门禁（手机号验证码登录） ============
+   设计口径与工作台一致：商务蓝主色（#1B5EBF）、8~16px 圆角、卡片化白底 + 柔和投影。
+   未登录时 body.auth-locked 直接隐藏 #app 与 #mnav，避免任何业务数据出现在首屏。 */
+#auth-gate{display:none;position:fixed;inset:0;z-index:3000;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+  background:radial-gradient(1100px 560px at 12% -8%,#E6EFFB 0%,rgba(230,239,251,0) 62%),
+             radial-gradient(900px 520px at 102% 108%,#E8F1FF 0%,rgba(232,241,255,0) 58%),var(--bg-page)}
+body.auth-locked #auth-gate{display:block}
+body.auth-locked #app,body.auth-locked #mnav{display:none}
+body.auth-locked{overflow:auto}
+.ag-wrap{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:32px 20px}
+.ag-card{width:100%;max-width:860px;background:var(--bg-card);border-radius:16px;overflow:hidden;display:grid;
+  grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);box-shadow:0 20px 56px rgba(15,43,82,.16),0 2px 8px rgba(15,43,82,.06)}
+.ag-hidden{display:none!important}
+.ag-brand{position:relative;background:linear-gradient(155deg,#0F2B52 0%,#1B5EBF 68%,#2A6BD0 100%);color:#fff;
+  padding:40px 34px;display:flex;flex-direction:column;overflow:hidden}
+.ag-brand::after{content:"";position:absolute;right:-64px;top:-48px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.07)}
+.ag-brand::before{content:"";position:absolute;right:24px;bottom:-76px;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.05)}
+.ag-logo{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;position:relative;z-index:1}
+.ag-logo svg{width:22px;height:22px;color:#fff}
+.ag-brand h1{font-size:19px;font-weight:600;margin-top:18px;position:relative;z-index:1;letter-spacing:.5px;color:#fff}
+.ag-brand .ag-brand-sub{font-size:12px;color:#A9C2E4;margin-top:7px;position:relative;z-index:1;letter-spacing:.3px}
+.ag-feats{margin-top:auto;padding-top:30px;display:flex;flex-direction:column;gap:13px;position:relative;z-index:1}
+.ag-feat{display:flex;gap:9px;font-size:12.5px;color:#D6E4F7;line-height:1.5}
+.ag-feat svg{width:15px;height:15px;flex:none;margin-top:2px;color:#8CC0FF}
+.ag-brand-foot{margin-top:26px;font-size:11px;color:#7E9BC4;position:relative;z-index:1}
+.ag-form{padding:38px 38px 32px;display:flex;flex-direction:column;justify-content:center}
+.ag-title{font-size:20px;font-weight:600;color:var(--text-primary)}
+.ag-sub{font-size:12.5px;color:var(--sub);margin-top:8px;line-height:1.65}
+.ag-fld{margin-top:18px}
+.ag-lb{display:block;font-size:12px;color:var(--hint);margin-bottom:7px}
+.ag-input{display:flex;align-items:center;height:48px;border:1px solid var(--border);border-radius:10px;
+  background:#F8FAFC;transition:.2s ease;overflow:hidden}
+.ag-input:focus-within{border-color:var(--primary-light);background:#fff;box-shadow:0 0 0 3px rgba(59,130,246,.13)}
+.ag-input.bad{border-color:#F19999;background:#FFF8F8}
+.ag-input.bad:focus-within{box-shadow:0 0 0 3px rgba(239,68,68,.12)}
+.ag-prefix{flex:none;padding:0 11px 0 14px;height:22px;display:flex;align-items:center;font-size:14px;color:var(--sub);border-right:1px solid var(--border)}
+.ag-input input{flex:1;min-width:0;height:100%;border:none;background:transparent;padding:0 14px;font-size:16px;
+  color:var(--txt);outline:none;letter-spacing:.5px;border-radius:0}
+.ag-input input::placeholder{font-size:15px;letter-spacing:0;color:#A8B4C4}
+.ag-code-btn{flex:none;margin-right:8px;height:34px;padding:0 12px;border-radius:8px;font-size:12.5px;font-weight:500;
+  color:var(--primary);background:var(--pri-l);white-space:nowrap;transition:.2s ease}
+.ag-code-btn:hover:not(:disabled){background:#DBE8F9}
+.ag-code-btn:disabled{color:var(--hint);background:#EEF2F7;cursor:not-allowed}
+.ag-err{display:none;margin-top:6px;font-size:12px;color:var(--bad);line-height:1.5}
+.ag-err.on{display:block}
+.ag-alert{display:none;margin-top:14px;padding:9px 12px;border-radius:8px;background:var(--bad-l);color:var(--bad);font-size:12.5px;line-height:1.55}
+.ag-alert.on{display:block}
+.ag-alert.info{background:var(--pri-l);color:var(--primary)}
+.ag-submit{width:100%;justify-content:center;height:48px;margin-top:22px;font-size:15px;font-weight:500;letter-spacing:.5px}
+.ag-submit.loading{opacity:.72;pointer-events:none}
+.ag-foot{margin-top:16px;font-size:11.5px;color:var(--hint);line-height:1.7}
+.ag-boot{display:flex;flex-direction:column;align-items:center;gap:14px;color:var(--sub);font-size:13px;
+  background:var(--bg-card);padding:34px 40px;border-radius:14px;box-shadow:0 12px 32px rgba(15,43,82,.1);text-align:center;max-width:420px}
+.ag-spin{width:26px;height:26px;border-radius:50%;border:2.5px solid #D6E1EF;border-top-color:var(--primary);animation:agspin .8s linear infinite}
+@keyframes agspin{to{transform:rotate(360deg)}}
+.ag-retry{display:none;margin-top:2px}
+
+/* ============ 顶栏账号入口 / 侧栏账号信息 ============ */
+.account-entry{position:relative;flex:none}
+.user-chip{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 10px 0 5px;border-radius:18px;
+  background:rgba(27,94,191,.09);color:var(--primary);font-size:12.5px;font-weight:500;white-space:nowrap;transition:.2s ease}
+.user-chip:hover{background:rgba(27,94,191,.16)}
+.user-chip .uav{width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+.user-chip .uav svg{width:13px;height:13px}
+.user-chip .ucaret{width:11px;height:11px;opacity:.65;transition:.2s}
+.account-entry.on .user-chip .ucaret{transform:rotate(180deg)}
+.user-menu{position:absolute;right:0;top:42px;width:252px;background:#fff;border-radius:12px;
+  box-shadow:0 14px 36px rgba(15,43,82,.18);border:1px solid var(--border);padding:8px;display:none;z-index:70}
+.account-entry.on .user-menu{display:block}
+.user-menu .um-hd{padding:10px 10px 12px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.user-menu .um-phone{font-size:13.5px;font-weight:600;color:var(--text-primary);letter-spacing:.4px}
+.user-menu .um-sub{font-size:11.5px;color:var(--hint);margin-top:5px;display:flex;align-items:center;gap:6px}
+.user-menu .um-sub .dot{width:6px;height:6px;border-radius:50%;background:var(--success);flex:none}
+.user-menu .um-sub .dot.warn{background:var(--warning)}
+.user-menu .um-sub .dot.err{background:var(--danger)}
+.user-menu button{display:flex;align-items:center;gap:9px;width:100%;padding:10px;border-radius:8px;font-size:13px;color:var(--txt);text-align:left}
+.user-menu button:hover{background:var(--bg)}
+.user-menu button.danger{color:var(--bad)}
+.user-menu button svg{width:15px;height:15px;flex:none}
+.side-user .su-meta{display:flex;flex-direction:column;min-width:0;line-height:1.32}
+.side-user .su-tel{font-size:11px;color:#7E9BC4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acct-box{display:flex;flex-wrap:wrap;gap:8px 24px;padding:12px 14px;background:var(--bg);border-radius:10px;font-size:12.5px;color:var(--sub)}
+.acct-box b{color:var(--txt);font-weight:600}
+.sync.run{color:var(--primary);background:var(--pri-l)}
+.sync.run .dot{background:var(--primary)}
+.sync.err{color:var(--bad);background:var(--bad-l)}
+.sync.err .dot{background:var(--bad)}
+
+@media(max-width:768px){
+  .ag-wrap{padding:0;align-items:stretch}
+  .ag-card{grid-template-columns:1fr;max-width:none;min-height:100vh;min-height:100dvh;border-radius:0;box-shadow:none;align-content:start}
+  .ag-brand{padding:24px 22px 22px;padding-top:calc(24px + env(safe-area-inset-top))}
+  .ag-brand h1{font-size:17px;margin-top:12px}
+  .ag-brand .ag-brand-sub{margin-top:5px}
+  .ag-feats,.ag-brand-foot{display:none}
+  .ag-logo{width:38px;height:38px;border-radius:10px}
+  .ag-logo svg{width:19px;height:19px}
+  .ag-form{padding:24px 22px calc(28px + env(safe-area-inset-bottom));justify-content:flex-start}
+  .ag-input{height:52px}
+  .ag-submit{height:50px;margin-top:20px}
+  .ag-boot{margin:20px;max-width:none}
+  .user-chip .uphone{display:none}
+  .user-chip{height:38px;padding:0 9px 0 6px}
+  .user-chip .uav{width:26px;height:26px}
+  #topbar .role-badge{display:none}
+  .user-menu{width:236px;right:-2px}
+}
+@media(max-width:360px){
+  .ag-form{padding:20px 16px calc(24px + env(safe-area-inset-bottom))}
+  .ag-input input::placeholder{font-size:13.5px}
+}
 </style>
 </head>
-<body data-page-node-id="KYXfY63br9B7wS2a2WEc2y">
+<body class="auth-locked" data-page-node-id="KYXfY63br9B7wS2a2WEc2y">
 
 <div id="app" data-page-node-id="wn3W0Um6Jpdg8dR04Qa06D">
   <!-- ============ 左侧导航栏 ============ -->
@@ -794,7 +905,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     </nav>
     <div class="side-user" data-page-node-id="IbEGkX6D4JmVZ0JmZw9coj">
       <span class="avatar" data-page-node-id="wEMfMjzv7cYT360bAhEI5K"><svg class="icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="Ml2Mzph8yR9rGzfSt5KSFt"><circle cx="12" cy="8" r="4" data-page-node-id="7ELhNMGP4BWHBysDbsiad4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6" data-page-node-id="BjO7dJcfAGW1WgdJLdVKa5"/></svg></span>
-      <span class="role" id="side-role" data-page-node-id="iP2C1xml2HJEKy6uGPbcja">学院管理员</span>
+      <div class="su-meta"><span class="role" id="side-role" data-page-node-id="iP2C1xml2HJEKy6uGPbcja">学院管理员</span><span class="su-tel" id="side-tel">未登录</span></div>
     </div>
   </aside>
 
@@ -813,6 +924,21 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         <select id="role-sel" aria-hidden="true" tabindex="-1" data-page-node-id="oRlRzCWdDq2I5eGmcgJxX5">
           <option value="admin" data-page-node-id="EjK0A6YMRunkJparxEYuAi">学院管理员</option>
         </select>
+        <div class="account-entry" id="account-entry">
+          <button type="button" class="user-chip" id="user-chip" aria-haspopup="true" aria-expanded="false" aria-label="账号与同步">
+            <span class="uav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg></span>
+            <span class="uphone" id="uc-phone">未登录</span>
+            <svg class="ucaret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="user-menu" id="user-menu">
+            <div class="um-hd">
+              <div class="um-phone" id="um-phone">未登录</div>
+              <div class="um-sub"><span class="dot" id="um-dot"></span><span id="um-state">—</span></div>
+            </div>
+            <button type="button" id="um-sync"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 .5-9 6 6 0 0 0-11.6-1.5A4 4 0 0 0 6 19z"/><path d="M12 15V9"/><path d="m9 12 3-3 3 3"/></svg>立即同步到云端</button>
+            <button type="button" id="um-logout" class="danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>退出登录</button>
+          </div>
+        </div>
       </div>
     </header>
     <div id="content" data-page-node-id="RocrvNibTvuHQqCsYifzBX">
@@ -945,23 +1071,22 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
             </div>
             <div id="pub-api-status" class="sync-status"></div>
           </div>
-          <div class="panel" id="cloud-sync" data-page-node-id="OzEp4EDxSYmLN2H4N8Snpd">
-            <h3 data-page-node-id="R9RBY8SaVPzTbBAhaTfZvP"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="TsIqwIZoJIiT38HClKJGSq"><path d="M17.5 19a4.5 4.5 0 0 0 .5-9 6 6 0 0 0-11.6-1.5A4 4 0 0 0 6 19z" data-page-node-id="dBsDzv9IaIizE5DO8FFCUB"/></svg>跨浏览器云同步（零后端）</h3>
-            <p class="desc" data-page-node-id="Z2s042xfsHzSifGlPdoTEp">基于 GitHub 私有 Gist 同步，多设备共用同一份数据。Token 仅存本机浏览器，不会上传到云端。</p>
-            <label class="fld" data-page-node-id="VR0sZkEq5JsJnvgKd00GAu">GitHub Token（仅勾 gist 权限）
-              <input type="password" id="sync-token" placeholder="ghp_… 或 github_pat_…" autocomplete="off" spellcheck="false" data-page-node-id="vA5oWD08PiUHUyk1FXh9ME">
-              <a href="https://github.com/settings/tokens/new?scopes=gist" target="_blank" rel="noopener" class="hint" data-page-node-id="nWHmunrai6DJ1nSnrPZcLO">去申请（已预勾 gist）</a>
-            </label>
-            <label class="fld" data-page-node-id="w3uJ5AZLDs3FpVFkEITqZD">同步码（留空＝首次同步自动新建）
-              <input type="text" id="sync-code" placeholder="留空则自动生成私有 Gist" autocomplete="off" spellcheck="false" data-page-node-id="Tv4orGlza912Yohx13XLRi">
-            </label>
-            <div class="actions" style="margin:6px 0 0" data-page-node-id="KmIa9x7mSkdzohzCeHTWAN">
-              <button class="btn btn-p btn-s" id="sync-enable" data-page-node-id="YcdwbO98iJacqnbwRkTULr">启用并同步</button>
-              <button class="btn btn-o btn-s" id="sync-now" data-page-node-id="9TBftmvhMtnHJ7vnUNVpGY">立即同步</button>
-              <button class="btn btn-g btn-s" id="sync-link" data-page-node-id="Er4BH2k6ZIcAFqSFuuO6j6">复制同步链接</button>
+          <div class="panel" id="account-panel">
+            <h3><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>账号与云同步</h3>
+            <p class="desc">工作台数据保存在手机号账号下。手机与电脑登录<b>同一手机号</b>即可看到完全一致的数据；登录后的改动会在数秒内自动上传云端。</p>
+            <div class="acct-box">
+              <span>手机号：<b id="acct-phone">未登录</b></span>
+              <span>当前设备：<b id="acct-device">—</b></span>
+              <span>云端状态：<b id="acct-state">未同步</b></span>
+              <span>最近同步：<b id="acct-time">—</b></span>
             </div>
-            <div id="sync-status" class="sync-status" data-page-node-id="qjzuZRMm1CxRhbClB6aQTp"></div>
-          </div>
+            <div class="actions" style="margin:12px 0 0">
+              <button class="btn btn-p btn-s" id="acct-sync">立即同步</button>
+              <button class="btn btn-o btn-s" id="acct-logout">退出登录</button>
+            </div>
+            <div id="acct-status" class="sync-status"></div>
+            <div class="arc-hint" style="margin-top:10px">退出登录会清除本机工作数据缓存（云端数据保留，重新登录即可恢复）。如需在本机留档，请先使用上方「导出 JSON 备份」。</div>
+        </div>
         </div>
         <div class="sec-h" data-page-node-id="PMwX13dQiBYFc6S6eCqXjT"><h2 data-page-node-id="AWE655VXXJUqW5PNbJGt3W">工具库</h2><span class="en" data-page-node-id="U9H6vk82E30e3cIXfN9j0a">配置化接入 · 新工具零框架改动</span></div>
         <div class="panel" data-page-node-id="v9DpmgYUBjmBsxq1qkQ3Q4">
@@ -988,6 +1113,59 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       </section>
     </main>
     </div>
+  </div>
+</div>
+
+<!-- ============ 登录门禁：手机号 + 短信验证码 ============
+     未登录时遮罩覆盖全屏并隐藏 #app / #mnav；登录成功后移除 body.auth-locked。 -->
+<div id="auth-gate">
+  <div class="ag-wrap">
+    <div class="ag-boot" id="ag-boot">
+      <div class="ag-spin" id="ag-spin"></div>
+      <div id="ag-boot-txt">正在校验登录状态…</div>
+      <button type="button" class="btn btn-o btn-s ag-retry" id="ag-retry">重新加载</button>
+    </div>
+
+    <form class="ag-card ag-hidden" id="ag-card" novalidate>
+      <aside class="ag-brand">
+        <div class="ag-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.4 9.2 8 10 4.6-.8 8-5 8-10V6z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h1>评奖评优工作台</h1>
+        <p class="ag-brand-sub">评定流水线 · 数据联动</p>
+        <div class="ag-feats">
+          <div class="ag-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg><span>同一手机号登录，手机与电脑看到完全一致的数据</span></div>
+          <div class="ag-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 .5-9 6 6 0 0 0-11.6-1.5A4 4 0 0 0 6 19z"/></svg><span>云端自动备份，换设备登录即恢复，无需手工导入</span></div>
+          <div class="ag-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>未登录不展示任何学生名单与评定数据</span></div>
+        </div>
+        <div class="ag-brand-foot">WorkBuddy 云服务 · 短信验证码登录</div>
+      </aside>
+
+      <div class="ag-form">
+        <h2 class="ag-title">手机号登录</h2>
+        <p class="ag-sub">输入手机号获取短信验证码，验证通过即完成登录。账号用于同步本工作台数据。</p>
+
+        <div class="ag-fld">
+          <label class="ag-lb" for="ag-phone">手机号</label>
+          <div class="ag-input" id="ag-phone-wrap">
+            <span class="ag-prefix">+86</span>
+            <input id="ag-phone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="11" placeholder="请输入 11 位手机号" aria-label="手机号">
+          </div>
+          <div class="ag-err" id="ag-phone-err" role="alert"></div>
+        </div>
+
+        <div class="ag-fld">
+          <label class="ag-lb" for="ag-code">短信验证码</label>
+          <div class="ag-input" id="ag-code-wrap">
+            <input id="ag-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="请输入 6 位验证码" aria-label="短信验证码">
+            <button type="button" class="ag-code-btn" id="ag-send">获取验证码</button>
+          </div>
+          <div class="ag-err" id="ag-code-err" role="alert"></div>
+        </div>
+
+        <div class="ag-alert" id="ag-alert" role="alert"></div>
+        <button type="submit" class="btn btn-p ag-submit" id="ag-submit">登录 / 注册</button>
+        <p class="ag-foot">未注册的手机号验证通过后将自动创建账号。登录后，工作台数据保存在该账号下并在设备间同步；如本机已有数据，将在首次登录时并入该账号。</p>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -1107,6 +1285,7 @@ function svg(name,cls){return '<svg class="icon '+(cls||"")+'" viewBox="0 0 24 2
 /* ================= 状态存储 ================= */
 const KEY="wb_pjpy_state_v1";
 let state=null,filterCat="全部",searchKw="",booting=true;
+let _stateSeed=false;   /* true＝当前 state 由内置空状态生成、尚无真实业务数据（登录合并时不上行，避免污染账号数据） */
 
 /* ==================== 学年与归档（学年化 + 只读锁定） ====================
    设计要点（对应《学年数据归档实现方案》）：
@@ -3424,7 +3603,7 @@ function blankState(){
   return {version:1,role:"admin",activeBatch:id,activeYearId:y.id,favs:["zongce"],__mtime:Date.now(),
     years:[y],batches:[b]};
 }
-function load(){try{const s=localStorage.getItem(KEY);if(s){state=JSON.parse(s);const raw=JSON.stringify(state);migrate();migrateBatches(state.batches);if(JSON.stringify(state)!==raw)save();return}}catch(e){}state=blankState();save()}
+function load(){_stateSeed=false;try{const s=localStorage.getItem(KEY);if(s){state=JSON.parse(s);const raw=JSON.stringify(state);migrate();migrateBatches(state.batches);if(JSON.stringify(state)!==raw)save();return}}catch(e){}state=blankState();save();_stateSeed=true}
 function migrate(){(state.batches||[]).forEach(b=>{
   if(!b.stage)b.stage={};
   if(!b.quota)b.quota=[];
@@ -3486,8 +3665,9 @@ function blockReadOnlyWrite(){
   return false;
 }
 function save(){
+  if(!state)return false;                       /* 未登录/已退出：不落盘，避免空态覆盖本机缓存 */
   if(!_sysWrite&&ctxReadOnly())return blockReadOnlyWrite();
-  try{localStorage.setItem(KEY,JSON.stringify(state));touchState();flashSync();scheduleSync();return true}
+  try{localStorage.setItem(KEY,JSON.stringify(state));_stateSeed=false;touchState();flashSync();scheduleSync();cloudTouch();return true}
   catch(e){toast("保存失败：本地存储不可用","alert");return false}
 }
 /* 仅保存上下文（切换学年/批次），不属于数据写入：只读学年也可作为查看上下文 */
@@ -5567,7 +5747,10 @@ function applyL8Version(batch,vid){
 }
 
 /* ================= 渲染：首页 ================= */
-function renderAll(){renderHeader();renderTodos();renderPipeline();renderStats();renderFavs();renderCats();renderTools();renderDataView();renderArchivePanel();renderBase();renderPub();try{markScrollableTables()}catch(e){}}
+function renderAll(){
+  /* 未登录门禁：不渲染任何业务视图，避免门禁下方出现学生数据 */
+  if(document.body.classList.contains("auth-locked"))return;
+  renderHeader();renderTodos();renderPipeline();renderStats();renderFavs();renderCats();renderTools();renderDataView();renderArchivePanel();renderBase();renderPub();try{markScrollableTables()}catch(e){}}
 
 function renderHeader(){
   const y=curYear();
@@ -9342,6 +9525,10 @@ function emptyState(){
 
 /* ==================== 云同步引擎（零后端 / GitHub 私有 Gist） ==================== */
 const SYNC_KEY_TOKEN="wb_pjpy_sync_token";   // Token 仅存本机 localStorage，绝不进入代码/仓库
+/* 账号（手机号）云同步已接管跨设备同步，Gist 通道默认停用：
+   两套引擎同时启用会对同一份 state 做整包覆盖，存在互相回滚风险，故强制互斥。
+   如需回滚到旧通道，把本开关改为 true 即恢复原有面板与行为（代码完整保留）。 */
+const GIST_SYNC_ENABLED=false;
 const SYNC_KEY_CODE="wb_pjpy_sync_code";     // 同步码 = 私有 Gist id
 const SYNC_FILE="sync-data.json";            // Gist 内唯一文件名
 const SYNC_DEBOUNCE=15000;                   // 本地改动后 15s 防抖自动上传
@@ -9569,10 +9756,537 @@ window.__pjpy={mergeStates,putGist,getGist,pullMergePush,enableSync,syncNow,buil
   saveArchiveStore,invalidateArchIds,ctxReadOnly,requireWritable,archiveChecks,migrateArchives,
   studentsTableCSV,detailTableCSV,quotaTableCSV,archiveFileName,pubVer,setActiveYear:id=>{state.activeYearId=id}};
 
+/* ==================== 账号体系：手机号验证码登录 + 云端同一份工作台数据 ====================
+   【设计口径】
+   1) 身份：WorkBuddy 云服务 Auth（手机号短信验证码）。首次验证通过即自动注册，不设密码。
+   2) 数据：一个账号一行状态文档（表 pjpy_state，RLS 仅本人可读写），payload 为该账号的工作台 state
+      全量快照。读写仍以 localStorage 为工作层，save() 触发云端 2.5s 防抖推送；登录与回到前台时
+      拉取云端并用既有 mergeStates() 做字段级合并（与 Gist 通道同一套收敛语义），因此手机与电脑
+      登录同一手机号拿到的是同一份数据，且两端改动都不会被整包覆盖。
+   3) 门禁：body.auth-locked 隐藏 #app / #mnav，renderAll() 直接返回 —— 未登录不渲染任何学生数据。
+      公示查询页（?pub=…）是给学生的公开页面，主动跳过门禁。
+   4) 账号隔离：本机缓存带 owner 标记；换手机号登录时先清本机工作数据与归档库，避免跨账号串数据。
+   5) 归档库（AKEY）按原设计只存本机、不参与云同步；退出登录不清除，换账号登录时才清除。 */
+const CLOUD_CFG={
+  endpoint:"https://wbapp-0o2pcd8xxbfj55kwlb13a6.app.workbuddy.host",
+  publishableKey:"wbpk_0O2pCD8XxbfJ55kwlB13A6_MPfeteTx9XnVOZJTM1jVusbwbO2AZxc5",
+  oauthRelayBaseUrl:"https://www.workbuddy.cn/v2/as/genie-baas/oauth"
+};
+const CLOUD_TABLE="pjpy_state";
+const CLOUD_SDK_URL="https://cdn.jsdelivr.net/npm/@tencent-ai/workbuddy-cloud-sdk@dev/lib/index.global.js";
+const SKEY_OWNER="wb_pjpy_cloud_owner";     // 本机缓存归属的账号 id（仅用于判断是否换账号）
+const SKEY_PHONE="wb_pjpy_cloud_phone";     // 脱敏手机号（仅用于界面回显）
+const CLOUD_PUSH_DELAY=2500;                // 改动后 2.5s 合并推送
+let _cloud=null,_session=null,_rowId=null,_lastPushOk=false,
+    _pushTimer=null,_pushing=false,_pushQueued=false,
+    _pendingOtp=null,_cdLeft=0,_cdTimer=null,_authReady=false,_authBusy=false;
+
+/* ---------- 客户端初始化 ---------- */
+function cloudSdk(){return window.WorkBuddyCloud||null}
+function loadCloudSdk(){
+  if(cloudSdk())return Promise.resolve();
+  if(window.__cloudSdkPromise)return window.__cloudSdkPromise;
+  window.__cloudSdkPromise=new Promise(function(resolve,reject){
+    var done=false,el=document.createElement("script");
+    var timer=setTimeout(function(){if(done)return;done=true;reject(new Error("云服务组件加载超时，请检查网络后重试"))},20000);
+    el.src=CLOUD_SDK_URL;el.async=true;
+    el.onload=function(){
+      if(done)return;done=true;clearTimeout(timer);
+      cloudSdk()?resolve():reject(new Error("云服务组件加载异常，请刷新重试"));
+    };
+    el.onerror=function(){
+      if(done)return;done=true;clearTimeout(timer);
+      reject(new Error("无法加载云服务组件，请检查网络后重试"));
+    };
+    document.head.appendChild(el);
+  });
+  return window.__cloudSdkPromise;
+}
+function cloud(){
+  if(_cloud)return _cloud;
+  var sdk=cloudSdk();
+  if(!sdk||!sdk.createWorkBuddyCloud)throw new Error("云服务组件未就绪");
+  _cloud=sdk.createWorkBuddyCloud({
+    endpoint:CLOUD_CFG.endpoint,
+    publishableKey:CLOUD_CFG.publishableKey,
+    oauthRelayBaseUrl:CLOUD_CFG.oauthRelayBaseUrl
+  });
+  return _cloud;
+}
+
+/* ---------- 手机号与文案 ---------- */
+function normPhone(v){return String(v==null?"":v).replace(/\D/g,"").replace(/^86(?=1\d{10}$)/,"")}
+function maskPhone(v){
+  var d=String(v==null?"":v).replace(/\D/g,"");
+  if(d.length===13&&d.slice(0,2)==="86")d=d.slice(2);
+  if(d.length!==11)return d?("****"+d.slice(-4)):"";
+  return d.slice(0,3)+"****"+d.slice(-4);
+}
+function errText(e,fallback){
+  var m=String((e&&e.message)||e||""),k=String((e&&(e.kind||e.code))||"");
+  if(/expire|过期/i.test(m+k))return "验证码已过期，请重新获取";
+  if(/invalid|incorrect|wrong|mismatch|不正确|错误/i.test(m+k))return "验证码不正确，请检查后重试";
+  if(/too ?many|rate|频繁|429/i.test(m+k)||k==="rate_limited")return "操作过于频繁，请稍后再试";
+  if(/limit|quota|上限/i.test(m+k))return "今日验证码次数已达上限，请稍后再试";
+  if(/network|fetch|timeout|超时/i.test(m+k)||k==="network")return "网络连接失败，请检查网络后重试";
+  if(/[\u4e00-\u9fa5]/.test(m))return m;
+  return (fallback||"操作失败")+"，请稍后重试";
+}
+/* 是否为「登录态失效」类错误：需要重新登录，而不是当成普通网络错误重试 */
+function isAuthError(e){
+  var m=String((e&&e.message)||e||""),k=String((e&&(e.kind||e.code))||"");
+  if(k==="unauthenticated"||k==="invalid_grant"||k==="401")return true;
+  return /unauthenticated|jwt expired|token.{0,12}expired|\b401\b/i.test(m+" "+k);
+}
+function deviceLabel(){
+  var ua=navigator.userAgent||"";
+  var os=/iPhone|iPad|iPod/i.test(ua)?"iOS":/Android/i.test(ua)?"Android":/Mac OS X/i.test(ua)?"macOS":/Windows/i.test(ua)?"Windows":"Web";
+  var br=/MicroMessenger/i.test(ua)?"微信":/Edg\//i.test(ua)?"Edge":/Chrome\//i.test(ua)?"Chrome":/Firefox\//i.test(ua)?"Firefox":/Safari\//i.test(ua)?"Safari":"浏览器";
+  return os+" · "+br;
+}
+function fmtTime(v){
+  if(!v)return "—";
+  var d=(v instanceof Date)?v:new Date(v);
+  if(isNaN(d.getTime()))return "—";
+  var p=function(n){return (n<10?"0":"")+n};
+  var sameDay=d.toDateString()===new Date().toDateString();
+  return (sameDay?"":(d.getMonth()+1)+"/"+d.getDate()+" ")+p(d.getHours())+":"+p(d.getMinutes());
+}
+function stateHasData(p){
+  try{return ((p&&p.batches)||[]).some(function(b){return (b.students&&b.students.length)||(b.detail&&b.detail.length)})}catch(e){return false}
+}
+function stateIsEmptyPayload(p){
+  try{var bs=(p&&p.batches)||[];return bs.every(function(b){return !(b.students&&b.students.length)&&!(b.detail&&b.detail.length)})}catch(e){return true}
+}
+/* 新账号的空工作区（不塞示例数据，避免示例学生混入真实名单） */
+function freshAccountState(){
+  var y=newYearObj("新建学年 "+todayStr()),bid=uid();
+  var b={id:bid,yearId:y.id,name:"新建批次 "+new Date().toLocaleDateString("zh-CN"),
+    students:[],detail:[],todos:[],quota:[],stage:{},publications:[],objections:[],isDemo:false,
+    createdAt:new Date().toISOString(),mtime:Date.now()};
+  y.batchIds=[bid];
+  return {version:1,role:"admin",activeBatch:bid,activeYearId:y.id,favs:["zongce"],
+    years:[y],batches:[b],__mtime:Date.now()};
+}
+
+/* ---------- 登录页交互 ---------- */
+function agEl(id){return document.getElementById(id)}
+function setAgErr(id,msg){var el=agEl(id);if(!el)return;el.textContent=msg||"";el.className="ag-err"+(msg?" on":"")}
+function setAgAlert(msg,kind){var el=agEl("ag-alert");if(!el)return;el.textContent=msg||"";el.className="ag-alert"+(msg?" on":"")+(kind==="info"?" info":"")}
+function setAgInputBad(id,bad){var el=agEl(id);if(el)el.className="ag-input"+(bad?" bad":"")}
+function agBusy(on){
+  _authBusy=!!on;
+  var b=agEl("ag-submit");
+  if(b){b.classList.toggle("loading",!!on);b.disabled=!!on;b.textContent=on?"正在验证…":"登录 / 注册"}
+}
+function showAgBoot(msg,canRetry){
+  var boot=agEl("ag-boot"),card=agEl("ag-card");
+  if(card)card.classList.add("ag-hidden");
+  if(boot)boot.classList.remove("ag-hidden");
+  var t=agEl("ag-boot-txt");if(t)t.textContent=msg||"正在校验登录状态…";
+  var sp=agEl("ag-spin");if(sp)sp.style.display=canRetry?"none":"";
+  var rb=agEl("ag-retry");if(rb)rb.style.display=canRetry?"":"none";
+}
+function showAgForm(){
+  var boot=agEl("ag-boot"),card=agEl("ag-card");
+  if(boot)boot.classList.add("ag-hidden");
+  if(card)card.classList.remove("ag-hidden");
+  var p=agEl("ag-phone");
+  if(p&&window.matchMedia&&window.matchMedia("(min-width:769px)").matches){try{p.focus()}catch(e){}}
+}
+function clearCountdown(){if(_cdTimer){clearInterval(_cdTimer);_cdTimer=null}_cdLeft=0;var b=agEl("ag-send");if(b){b.disabled=false;b.textContent="获取验证码"}}
+function startCountdown(sec){
+  _cdLeft=sec|0;
+  if(_cdTimer)clearInterval(_cdTimer);
+  var tick=function(){
+    var b=agEl("ag-send");if(!b)return;
+    if(_cdLeft>0){b.disabled=true;b.textContent=_cdLeft+"s 后重发"}
+    else{b.disabled=false;b.textContent="获取验证码";clearInterval(_cdTimer);_cdTimer=null}
+  };
+  tick();
+  _cdTimer=setInterval(function(){_cdLeft--;tick()},1000);
+}
+function resetAgForm(){
+  clearCountdown();
+  ["ag-phone","ag-code"].forEach(function(id){var el=agEl(id);if(el)el.value=""});
+  setAgInputBad("ag-phone-wrap",false);setAgInputBad("ag-code-wrap",false);
+  setAgErr("ag-phone-err","");setAgErr("ag-code-err","");setAgAlert("");
+  agBusy(false);_pendingOtp=null;
+}
+
+async function sendPhoneCode(){
+  if(_authBusy)return;
+  var phone=normPhone(agEl("ag-phone").value);
+  if(!/^1\d{10}$/.test(phone)){
+    setAgInputBad("ag-phone-wrap",true);
+    setAgErr("ag-phone-err","请输入正确的 11 位手机号");
+    setAgAlert("");return;
+  }
+  setAgInputBad("ag-phone-wrap",false);setAgErr("ag-phone-err","");setAgAlert("");
+  var btn=agEl("ag-send");
+  if(btn){btn.disabled=true;btn.textContent="发送中…"}
+  try{
+    var res=await cloud().auth.sendOtp({phone:phone});
+    if(res.error)throw res.error;
+    _pendingOtp={phone:phone,verificationId:res.data.verificationId,isExistingUser:res.data.isExistingUser};
+    setAgAlert("验证码已发送至 "+maskPhone(phone)+"，5 分钟内有效","info");
+    startCountdown(60);
+    var ci=agEl("ag-code");if(ci){try{ci.focus()}catch(e){}}
+  }catch(e){
+    if(btn){btn.disabled=false;btn.textContent="获取验证码"}
+    setAgAlert(errText(e,"发送验证码失败"));
+  }
+}
+
+async function submitLogin(){
+  if(_authBusy)return;
+  var phone=normPhone(agEl("ag-phone").value);
+  var code=String(agEl("ag-code").value||"").replace(/\D/g,"");
+  if(!/^1\d{10}$/.test(phone)){
+    setAgInputBad("ag-phone-wrap",true);
+    setAgErr("ag-phone-err","请输入正确的 11 位手机号");return;
+  }
+  setAgInputBad("ag-phone-wrap",false);setAgErr("ag-phone-err","");
+  if(!_pendingOtp||_pendingOtp.phone!==phone){
+    setAgInputBad("ag-code-wrap",true);
+    setAgErr("ag-code-err","请先点击「获取验证码」，再填入收到的验证码");return;
+  }
+  if(!/^\d{4,8}$/.test(code)){
+    setAgInputBad("ag-code-wrap",true);
+    setAgErr("ag-code-err","请输入短信中的验证码");return;
+  }
+  setAgInputBad("ag-code-wrap",false);setAgErr("ag-code-err","");setAgAlert("");
+  agBusy(true);
+  try{
+    var res=await cloud().auth.verifyOtp({
+      phone:_pendingOtp.phone,
+      verificationId:_pendingOtp.verificationId,
+      isExistingUser:_pendingOtp.isExistingUser,
+      token:code
+    });
+    if(res.error)throw res.error;
+    var s=await cloud().auth.getSession();
+    if(s.error)throw s.error;
+    if(!s.data)throw new Error("登录状态未建立，请重试");
+    _pendingOtp=null;
+    await enterApp(s.data);
+  }catch(e){
+    var msg=errText(e,"登录失败");
+    /* 验证码类错误贴在验证码输入框下方；网络类错误走顶部提示条 */
+    if(/验证码|不正确|过期/.test(msg))setAgErr("ag-code-err",msg);
+    else setAgAlert(msg);
+  }finally{
+    agBusy(false);
+  }
+}
+
+/* ---------- 云端状态文档读写 ---------- */
+async function cloudPullRow(){
+  var res=await cloud().database.from(CLOUD_TABLE)
+    .select("id,payload,updated_at,client_label")
+    .order("updated_at",{ascending:false}).limit(1).maybeSingle();
+  if(res.error)throw res.error;
+  return res.data||null;
+}
+async function cloudPushRow(){
+  if(!_session||!state)return false;
+  var body={payload:state,schema_version:1,client_label:deviceLabel(),updated_at:new Date().toISOString()};
+  if(_rowId){
+    var up=await cloud().database.from(CLOUD_TABLE).update(body).eq("id",_rowId).select("id");
+    if(up.error)throw up.error;
+    if(!up.data||!up.data.length){_rowId=null;return cloudPushRow()}   /* 行已被删除：重建 */
+    return true;
+  }
+  var ins=await cloud().database.from(CLOUD_TABLE).insert(body).select("id");
+  if(ins.error){
+    if(String(ins.error.code)==="23505"){                              /* 并发首登录：改为更新已有行 */
+      var row=await cloudPullRow();
+      if(row&&row.id){_rowId=row.id;return cloudPushRow()}
+    }
+    throw ins.error;
+  }
+  _rowId=ins.data&&ins.data[0]?ins.data[0].id:null;
+  return true;
+}
+async function pushNow(silent){
+  if(!_session||!state)return false;
+  if(_pushing){_pushQueued=true;return false}
+  _pushing=true;
+  if(!silent)setSyncChip("run","正在同步…");
+  else if(!_lastPushOk)setSyncChip("run","正在同步…");
+  try{
+    await cloudPushRow();
+    _lastPushOk=true;
+    setSyncChip("","已同步 · "+fmtTime(new Date()));
+    setAcctStatus("ok","已同步 · "+fmtTime(new Date()));
+    setAcctState("已同步");
+    setAcctTime(fmtTime(new Date()));
+    return true;
+  }catch(e){
+    _lastPushOk=false;
+    if(isAuthError(e)){sessionExpired();return false}
+    setSyncChip("err","同步失败");
+    setAcctStatus("err","同步失败："+errText(e,"云端不可用"));
+    setAcctState("同步失败");
+    if(!silent)toast("云端同步失败："+errText(e,"请稍后重试"),"alert");
+    return false;
+  }finally{
+    _pushing=false;
+    if(_pushQueued){_pushQueued=false;setTimeout(function(){pushNow(true)},1000)}
+  }
+}
+function cloudTouch(){
+  if(!_session||!state)return;
+  if(_pushTimer)clearTimeout(_pushTimer);
+  setSyncChip("run","待同步…");
+  _pushTimer=setTimeout(function(){_pushTimer=null;pushNow(true)},CLOUD_PUSH_DELAY);
+}
+/* 回到前台时对账：拉取云端，若比本机新则合并渲染（跨设备切换的主要入口） */
+async function cloudReconcile(){
+  if(!_session||!state||_pushing||_pushTimer)return;
+  try{
+    var row=await cloudPullRow();
+    if(!row||!row.payload)return;
+    if(row.id&&row.id!==_rowId)_rowId=row.id;
+    var merged=mergeStates(state,row.payload);
+    if(JSON.stringify(merged)===JSON.stringify(state))return;
+    state=merged;
+    try{migrate();ensureYears()}catch(e){}
+    try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}
+    renderAll();updateAccountUI();
+    toast("已同步其他设备的最新改动","check");
+  }catch(e){/* 静默：下次保存会重试上传 */}
+}
+
+/* ---------- 界面状态 ---------- */
+function setSyncChip(type,msg){
+  var chip=document.getElementById("sync-chip"),txt=document.getElementById("sync-txt");
+  if(chip)chip.className="sync"+(type?" "+type:"");
+  if(txt)txt.textContent=msg||"";
+}
+function setAcctStatus(type,msg){
+  var el=document.getElementById("acct-status");
+  if(!el)return;
+  el.className="sync-status"+(type?" "+type:"");
+  el.textContent=msg||"";
+}
+function setAcctState(t){var el=document.getElementById("acct-state");if(el)el.textContent=t||"—"}
+function setAcctTime(t){var el=document.getElementById("acct-time");if(el)el.textContent=t||"—"}
+function updateAccountUI(){
+  var phone=localStorage.getItem(SKEY_PHONE)||"";
+  var dev=deviceLabel();
+  ["uc-phone","um-phone","acct-phone"].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=phone||"未登录"});
+  var st=document.getElementById("side-tel");if(st)st.textContent=phone||"未登录";
+  var de=document.getElementById("acct-device");if(de)de.textContent=dev;
+  var ms=document.getElementById("um-state");
+  if(ms)ms.textContent=_session?("已登录 · "+dev):"未登录";
+  var dot=document.getElementById("um-dot");
+  if(dot)dot.className="dot"+(_lastPushOk?"":(_session?" warn":" err"));
+}
+function closeUserMenu(){
+  var e=document.getElementById("account-entry");
+  if(e)e.classList.remove("on");
+  var c=document.getElementById("user-chip");
+  if(c)c.setAttribute("aria-expanded","false");
+}
+
+/* ---------- 登录成功：合并云端数据并解锁 ---------- */
+async function enterApp(session){
+  var user=(session&&session.user)||{};
+  var uid=String(user.id||"");
+  var phone=maskPhone(user.phone||"");
+  var prevOwner=localStorage.getItem(SKEY_OWNER)||"";
+  if(prevOwner&&uid&&prevOwner!==uid){
+    /* 换账号：清掉上一个账号留在本机的工作数据与归档库，防止跨账号串数据 */
+    try{localStorage.removeItem(KEY);localStorage.removeItem(AKEY)}catch(e){}
+    state=null;_stateSeed=false;
+    try{toast("已切换账号，本机归档库已清除（归档仅存本机，如需留档请用「导出归档文件」）","alert")}catch(e){}
+  }
+  _session=session;
+  if(uid)localStorage.setItem(SKEY_OWNER,uid);
+  if(phone)localStorage.setItem(SKEY_PHONE,phone);
+
+  var local=(state&&!_stateSeed)?state:null;
+  var row=null,readErr=null;
+  setSyncChip("run","正在读取云端…");
+  try{row=await cloudPullRow()}catch(e){readErr=e}
+
+  var merged;
+  if(row&&row.payload){
+    _rowId=row.id;
+    merged=mergeStates(local,row.payload);
+    /* 云端只是空壳而本机有真实数据时，以本机为准，避免多出一个空批次 */
+    if(local&&stateHasData(local)&&stateIsEmptyPayload(row.payload))merged=clone(local);
+  }else{
+    if(row)_rowId=row.id;
+    merged=local?clone(local):freshAccountState();
+  }
+  state=merged;
+  try{migrate();ensureYears()}catch(e){}
+  try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}
+
+  _authReady=true;
+  clearCountdown();
+  document.body.classList.remove("auth-locked");
+  try{renderAll()}catch(e){}
+  updateAccountUI();
+  setAcctState(row&&row.payload?"已同步":"已建立备份");
+  setAcctTime(row&&row.updated_at?fmtTime(row.updated_at):"—");
+
+  if(readErr){
+    setSyncChip("err","云端读取失败");
+    setAcctStatus("err","云端读取失败，当前显示本机数据；后续保存会自动重试上传");
+    toast("云端读取失败，已使用本机数据，网络恢复后会自动上传","alert");
+    return;
+  }
+  var ok=await pushNow(true);
+  if(ok){
+    if(row&&row.payload){
+      setAcctStatus("ok","已与云端合并（云端更新于 "+fmtTime(row.updated_at)+"）");
+      toast("登录成功，已同步云端数据","check");
+    }else{
+      setAcctStatus("ok","已在账号下建立云端备份");
+      toast("登录成功，已为该手机号建立云端备份","check");
+    }
+  }
+}
+
+/* ---------- 退出登录 ---------- */
+function confirmLogoutDlg(){
+  return new Promise(function(resolve){
+    var tail=_lastPushOk
+      ? '<p>云端数据已是最新。退出后将清除本机工作数据缓存（云端保留），重新登录同一手机号即可恢复。归档学年仅存本机，不受影响。</p>'
+      : '<p><b style="color:var(--bad)">本次改动尚未成功上传云端</b>（网络异常或服务不可用）。退出会清除本机缓存，未同步的修改将丢失。建议先联网后点「立即同步」。</p>';
+    modal('<h3>'+svg("alert")+'退出登录</h3>'+tail
+      +'<div class="row"><button class="btn btn-g btn-s" data-lg-cancel>取消</button><button class="btn btn-d btn-s" data-lg-ok>确认退出</button></div>');
+    var c=document.querySelector("[data-lg-cancel]"),o=document.querySelector("[data-lg-ok]");
+    if(c)c.onclick=function(){closeModal();resolve(false)};
+    if(o)o.onclick=function(){closeModal();resolve(true)};
+  });
+}
+async function doLogout(){
+  if(!_session)return;
+  closeUserMenu();
+  var go=await confirmLogoutDlg();
+  if(!go)return;
+  if(_pushTimer){clearTimeout(_pushTimer);_pushTimer=null}
+  setSyncChip("run","正在保存…");
+  await pushNow(true);
+  try{await cloud().auth.signOut()}catch(e){}
+  _session=null;_rowId=null;_authReady=false;_lastPushOk=false;_pendingOtp=null;
+  try{
+    localStorage.removeItem(KEY);            /* 工作数据：云端有备份，退出即清除 */
+    localStorage.removeItem(SKEY_OWNER);
+    localStorage.removeItem(SKEY_PHONE);     /* 归档库 AKEY 保留：仅存本机，无云端副本 */
+  }catch(e){}
+  state=null;_stateSeed=false;
+  document.body.classList.add("auth-locked");
+  resetAgForm();
+  showAgForm();
+  try{window.scrollTo(0,0)}catch(e){}
+  setAgAlert("已退出登录。同一手机号重新登录即可恢复云端数据。","info");
+}
+
+/* 登录态失效：回到登录页重新验证，本机数据保留（重新登录同一账号后自动合并上传） */
+async function sessionExpired(){
+  if(!_session)return;
+  _session=null;_authReady=false;_lastPushOk=false;
+  try{await cloud().auth.signOut()}catch(e){}
+  document.body.classList.add("auth-locked");
+  resetAgForm();
+  showAgForm();
+  setAgAlert("登录状态已过期，请重新获取验证码登录。本机数据已保留，重新登录后会自动合并上传。","info");
+  updateAccountUI();
+}
+
+/* ---------- 启动门禁 ---------- */
+async function authBoot(){
+  if(inPubQueryMode()){                 /* 学生公示查询页：公开访问，不拦 */
+    document.body.classList.remove("auth-locked");
+    return;
+  }
+  if(location.protocol==="file:"){
+    document.body.classList.add("auth-locked");
+    showAgBoot("检测到以本地文件方式打开：手机号登录需要线上域名，请改用发布后的 https 链接访问",false);
+    return;
+  }
+  document.body.classList.add("auth-locked");
+  showAgBoot("正在校验登录状态…",false);
+  try{
+    await loadCloudSdk();
+    var res=await cloud().auth.getSession();
+    if(res&&res.error){
+      var k=String(res.error.kind||"");
+      if(k&&k!=="unauthenticated"&&k!=="session_missing"&&k!=="invalid_grant")throw res.error;
+    }
+    if(res&&res.data&&res.data.user){await enterApp(res.data);return}
+    showAgForm();
+  }catch(e){
+    showAgBoot(errText(e,"登录状态校验失败"),true);
+  }
+}
+
+/* ---------- 事件绑定 ---------- */
+(function authWire(){
+  var card=agEl("ag-card");
+  if(card)card.addEventListener("submit",function(ev){ev.preventDefault();submitLogin()});
+  var send=agEl("ag-send");
+  if(send)send.onclick=function(ev){ev.preventDefault();sendPhoneCode()};
+  var phone=agEl("ag-phone");
+  if(phone)phone.addEventListener("input",function(){
+    var v=normPhone(phone.value).slice(0,11);
+    if(v!==phone.value)phone.value=v;
+    setAgInputBad("ag-phone-wrap",false);setAgErr("ag-phone-err","");setAgAlert("");
+  });
+  var code=agEl("ag-code");
+  if(code){
+    code.addEventListener("input",function(){
+      var v=String(code.value||"").replace(/\D/g,"").slice(0,6);
+      if(v!==code.value)code.value=v;
+      setAgInputBad("ag-code-wrap",false);setAgErr("ag-code-err","");
+    });
+    code.addEventListener("keydown",function(ev){if(ev.key==="Enter"){ev.preventDefault();submitLogin()}});
+  }
+  var retry=agEl("ag-retry");
+  if(retry)retry.onclick=function(){window.__cloudSdkPromise=null;authBoot()};
+
+  var entry=document.getElementById("account-entry"),chip=document.getElementById("user-chip");
+  if(chip)chip.onclick=function(ev){
+    ev.stopPropagation();
+    var on=entry.classList.toggle("on");
+    chip.setAttribute("aria-expanded",on?"true":"false");
+  };
+  document.addEventListener("click",function(ev){
+    if(entry&&!entry.contains(ev.target))closeUserMenu();
+  });
+  var umSync=document.getElementById("um-sync");
+  if(umSync)umSync.onclick=function(){closeUserMenu();if(_session)pushNow(false)};
+  var umOut=document.getElementById("um-logout");
+  if(umOut)umOut.onclick=function(){doLogout()};
+  var acctSync=document.getElementById("acct-sync");
+  if(acctSync)acctSync.onclick=function(){if(_session)pushNow(false);else toast("请先登录","alert")};
+  var acctOut=document.getElementById("acct-logout");
+  if(acctOut)acctOut.onclick=function(){doLogout()};
+
+  /* 切到后台立即冲刷待推送改动；回到前台与云端对账一次 */
+  document.addEventListener("visibilitychange",function(){
+    if(!_session)return;
+    if(document.visibilityState==="hidden"){
+      if(_pushTimer){clearTimeout(_pushTimer);_pushTimer=null}
+      pushNow(true);
+    }else{
+      cloudReconcile();
+    }
+  });
+  window.addEventListener("online",function(){if(_session)pushNow(true)});
+})();
+
 /* 启动：骨架屏 → 渲染 */
 load();
 migrateArchives();   /* 归档库升级：旧版归档的数据副本回灌为工作区只读数据 */
 (function boot(){
+  /* 未登录：不铺设任何工作台占位内容（骨架屏同样属于工作台界面，登录后再渲染） */
+  if(document.body.classList.contains("auth-locked")){setTimeout(()=>{booting=false},350);return}
   const grid=document.getElementById("tool-grid");
   grid.innerHTML=Array(4).fill('<div class="tcard"><div class="sk" style="width:44px;height:44px;border-radius:11px"></div><div class="sk" style="height:14px;width:70%"></div><div class="sk" style="height:12px;width:90%"></div><div class="sk" style="height:12px;width:50%"></div></div>').join("");
   document.getElementById("stats").innerHTML=Array(4).fill('<div class="stat"><div class="sk" style="height:24px;width:64px;margin-bottom:8px"></div><div class="sk" style="height:12px;width:90px;margin-bottom:6px"></div><div class="sk" style="height:11px;width:120px"></div></div>').join("");
@@ -9583,6 +10297,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal();closeT
 
 /* 云同步面板事件 + 启动挂钩 */
 (function cloudSyncBoot(){
+  if(!GIST_SYNC_ENABLED)return;                   /* Gist 通道停用：改由账号云同步承担 */
   const en=document.getElementById("sync-enable");
   const now=document.getElementById("sync-now");
   const link=document.getElementById("sync-link");
@@ -10091,6 +10806,8 @@ if(inPubQueryMode()){
   // 延迟到 state 初始化完成
   setTimeout(renderPubQuery,100);
 }
+/* 账号门禁启动：校验收不到登录态则停在登录页（公示查询页自动跳过） */
+authBoot();
 </script>
 
 <!-- 公示查询独立全屏页面（学生访问 #pub/{pubId} 时显示） -->
